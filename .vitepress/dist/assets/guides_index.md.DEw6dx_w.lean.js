@@ -1,0 +1,1 @@
+import{_ as e,c as a,o as r,a3 as t}from"./chunks/framework.Bsyxd66g.js";const m=JSON.parse('{"title":"Guides","description":"","frontmatter":{},"headers":[],"relativePath":"guides/index.md","filePath":"guides/index.md"}'),o={name:"guides/index.md"},n=t("",8),i=[n];function s(c,l,d,h,u,p){return r(),a("div",null,i)}const _=e(o,[["render",s]]);export{m as __pageData,_ as default};
