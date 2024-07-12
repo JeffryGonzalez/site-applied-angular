@@ -20,7 +20,7 @@ They did some "monkey patching" of some of the internal browser APIs that might 
 It allowed us to get *much farther*, performance-wise, than we had with AngularJS, but we started to outgrow that as well.
 
 The Angular team, early on, leaned into the idea of **Observables**, in particular with the RXJS library. Observables are one of many 
-to deal with asynchronicity in frontend applications. Many of us used lots of tools and patterns from the RXJS library to help with
+to deal with asynchronicity in front end applications. Many of us used lots of tools and patterns from the RXJS library to help with
 performance and keeping application state accurate. We will use RXJS for *some things*, but it is a pretty heavy-handed set of tools to just keep the UI up to date across your application.
 
 ## Enter Signals

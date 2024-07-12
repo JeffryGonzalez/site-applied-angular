@@ -20,9 +20,11 @@ export default defineConfig({
     sidebar: {
       '/docs/': [
         {
-          text: 'Docs',
+          text: 'Docs', link: '/docs/',
           items: [
-            { text: 'Outline', link: '/docs/' },
+            { text: 'Outline', link: '/docs/outline'},
+            { text: 'Why Angular', link: '/docs/applied' },
+            { text: 'Building Blocks', link: '/docs/building-blocks'},
             {
               text: 'Components', link: '/docs/components/', items: [
                 { text: 'Signals', link: '/docs/components/component-state' },
@@ -31,8 +33,9 @@ export default defineConfig({
                 { text: 'Directives', link: '/docs/components/directives' }
               ]
             },
+            { text: 'State', link: '/docs/state'},
+            { text: 'Routing', link: '/docs/routing'},
             { text: 'Legacy Angular', link: '/docs/legacy/' },
-            { text: 'State', link: '/docs/state'}
           ]
         },
 
