@@ -36,6 +36,7 @@ export default defineConfig({
             { text: 'State', link: '/docs/state'},
             { text: 'Routing', link: '/docs/routing'},
             { text: 'Legacy Angular', link: '/docs/legacy/' },
+            { text: 'Scenarios', link: '/docs/scenarios/software'}            
           ]
         },
 
