@@ -79,7 +79,7 @@ So, an imagined back and forth. I will play the role of Sue, and Bob will be the
 - Sue: So, it sounds like "Issues" are a thing the Software Team has, and what we are creating is a way to get something on the issue list. That makes sense. Thanks.
 - Bob: Glad I could help, sorry if I looked distracted there, I was chatting with the Software Center people again, they are going to have that kid actually write some code to call a REST API you will create that will let the employee know the status of the issue. I think that is really important. And maybe we can get a sort of back-and-forth between your two systems. Might be best if I just have him send you a link to the shared Excel file they are dumping this stuff into and you can work from that? Make a request from them for access.
 - Sue: Uh, I'll look into it. 
-- Bob: Sounds good. Sounds like we are about down here.
+- Bob: Sounds good. Sounds like we are about done here.
 - Sue: Actually, one more quick thing. Any idea what would be most helpful for the Software team to address these issues? Anything other than just a description of what is going wrong?
 - Bob: What a team player! I mean, you should check with them, but yeah, good idea.
 - Sue: Yeah, since the idea is to cut down on their load, I think there are some interesting things we could do here to help them.
