@@ -13,4 +13,7 @@ An overview of the configuration and approach for the BFF API server.
 On overview of the setup of the Angular application we will use in class.
 
 ## :link: [Mock Service Workers](./msw.md)
+
 Setting up Mock Service Workers in your Angular application.
+
+## :link: [Feature Flags](./feature-flags.md)
