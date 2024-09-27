@@ -1,15 +1,15 @@
 # Mock Service Worker
 
-[Mock Service Worker](https://mswjs.io/) is a development library for working with APIs as you develop 
+[Mock Service Worker](https://mswjs.io/) is a development library for working with APIs as you develop
 or test your front end applications.
 
 [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) are a browser feature that allows
-developers to run JavaScript code in the browser as an isolated *service* and are used in many scenarios
-to provide and augment functionality to JavaScript applications. 
+developers to run JavaScript code in the browser as an isolated _service_ and are used in many scenarios
+to provide and augment functionality to JavaScript applications.
 
 The MSW library is implemented as a service worker that is only (or should only) be used during development.
 
-The service worker will intercept each HTTP request made by your application and, if a request is made that is 
+The service worker will intercept each HTTP request made by your application and, if a request is made that is
 matched by our code within the MSW, use our implementation instead of sending the request to an actual API.
 
 I installed the Mock Service Worker library:
@@ -87,3 +87,29 @@ prepareApp().then(() => {
 });
 ```
 
+### An Example Handler
+
+```ts
+import { HttpResponse, http } from "msw";
+import { Vendor } from "../app/software/state/vendors-feature";
+const vendors: Vendor[] = [
+  { id: "1", name: "Microsoft" },
+  { id: "2", name: "JasperFx" },
+];
+const handlers = [
+  http.get("/api/vendors", () => {
+    return HttpResponse.json(vendors);
+  }),
+  http.post<{}, { name: string }, Vendor>(
+    "/api/vendors",
+    async ({ request }) => {
+      const body = await request.json();
+      const response = { ...body, id: crypto.randomUUID() };
+      vendors.push(response);
+      return HttpResponse.json(response);
+    }
+  ),
+];
+
+export default handlers;
+```
