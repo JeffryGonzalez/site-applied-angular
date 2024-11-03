@@ -6,151 +6,151 @@ There is a _lot_ you can do with them in terms of patterns like continuous integ
 
 Here, I'm enabling that, but mostly using them to allow us to conditionally allow features to be displayed to the user - so only the client side, and only really thinking of this for continuous integration scenarios.
 
-## The Feature Flags Store
+I got most of this implementation from [Tim Deschryver's Blog Post](https://timdeschryver.dev/blog/consuming-net-feature-flags-within-an-angular-application#feature-flag-directive). I could be extended/improved (using an Ngrx SignalStore, for example, but I wanted to keep it minimal on dependencies.)
 
-```ts
+## The Code
+
+I'm assuming a directory in the root of your `/src/app` called `feature-management` here.
+
+### The `index.ts`
+
+Only thing here is a `const` for the url of the feature flag server. This is to allow for customization.
+
+```typescript
+export const FEATURE_FLAG_URL = "/api/features";
+```
+
+### The `feature.service.ts` file:
+
+```typescript
 import { HttpClient } from "@angular/common/http";
-import { inject } from "@angular/core";
-import { tapResponse } from "@ngrx/operators";
-import { patchState, signalStore, withHooks, withState } from "@ngrx/signals";
-import { rxMethod } from "@ngrx/signals/rxjs-interop";
-import { pipe, switchMap } from "rxjs";
-import { NavBarItem } from "../components/nav-bar/types";
-import { ALWAYS_LINKS, FeatureFlags, linkSetup } from "./features";
+import { inject, Injectable } from "@angular/core";
+import { FEATURE_FLAG_URL } from ".";
 
-type FeatureFlagState = {
-  features: FeatureFlags;
-  links: NavBarItem[];
-};
+@Injectable({ providedIn: "root" })
+export class FeaturesService {
+  #client = inject(HttpClient);
 
-const initialState: FeatureFlagState = {
-  features: {
-    learningEnabled: false,
-  },
-  links: ALWAYS_LINKS,
-};
-
-export const FeatureStore = signalStore(
-  withState(initialState),
-
-  withHooks((store) => {
-    const client = inject(HttpClient);
-    return {
-      onInit: rxMethod<void>(
-        pipe(
-          switchMap(() =>
-            client
-              .get<FeatureFlags>("http://my.features.com/applied-angular")
-              .pipe(
-                tapResponse(
-                  (flags) =>
-                    patchState(store, {
-                      features: flags,
-                      links: [...store.links(), ...getLinks(flags)],
-                    }),
-                  (error) => console.error(error)
-                )
-              )
-          )
-        )
-      ),
-    };
-  })
-);
-
-function getLinks(features: FeatureFlags): NavBarItem[] {
-  return Object.keys(features).reduce((links: NavBarItem[], key) => {
-    if (features[key as keyof typeof features] === true) {
-      links.push(linkSetup[key as keyof FeatureFlags]);
-    }
-    return links;
-  }, []);
-}
-```
-
-## The Configuration
-
-```ts
-import { NavBarItem } from "../components/nav-bar/types";
-
-// these are the links that will always be displayed, they are not behind a feature toggle.
-export const ALWAYS_LINKS: NavBarItem[] = [
-  {
-    text: "Home",
-    href: "/",
-  },
-];
-
-// These are the flags you are expecting from the feature flag service.
-export type FeatureFlags = {
-  learningEnabled: boolean;
-};
-
-// If a particular feature is enabled, add a link to the nav bar.
-export const linkSetup: Record<keyof FeatureFlags, NavBarItem> = {
-  learningEnabled: {
-    text: "Stuff From Class",
-    href: "/learning",
-  },
-};
-```
-
-## A Route Guard
-
-```ts
-function featureEnabledGuard(feature: keyof FeatureFlags) {
-  return () => {
-    return inject(FeatureStore).features()[feature];
-  };
-}
-```
-
-Route Guard Usage:
-
-```ts
-canActivate: [featureEnabledGuard('learningEnabled')],
-```
-
-### Creating a Directive
-
-```ts
-import {
-  Directive,
-  effect,
-  inject,
-  input,
-  TemplateRef,
-  ViewContainerRef,
-} from "@angular/core";
-import { FeatureFlags } from "./features";
-import { FeatureStore } from "./features.store";
-
-@Directive({
-  standalone: true,
-  selector: "[appFeatureFlag]",
-})
-export class FeatureFlagDirective {
-  store = inject(FeatureStore);
-  appFeatureFlag = input.required<keyof FeatureFlags>();
-  constructor(
-    private viewContainer: ViewContainerRef,
-    private templateRef: TemplateRef<unknown>
-  ) {
-    effect(() => {
-      if (this.store.features()[this.appFeatureFlag()]) {
-        this.viewContainer.createEmbeddedView(this.templateRef);
-      } else {
-        this.viewContainer.clear();
-      }
-    });
+  public getEnabledFeatures() {
+    return this.#client.get<string[]>(FEATURE_FLAG_URL);
   }
 }
 ```
 
-Usage:
+### The `feature.guard.ts` file:
 
-```ts
-    <div *appFeatureFlag="'learningEnabled'">
-      <p>Remember, we are just learning</p>
-    </div>
+> Note: I decided to go with the `canMatch` version, but Tim's blog has an alternative:
+
+```typescript
+import { inject } from "@angular/core";
+import { CanMatchFn } from "@angular/router";
+import { map } from "rxjs";
+import { FeaturesService } from "./feature.service";
+
+export const canMatchFeature =
+  (feature: string): CanMatchFn =>
+  () => {
+    const featuresService = inject(FeaturesService);
+    return featuresService
+      .getEnabledFeatures()
+      .pipe(map((r) => r.includes(feature)));
+  };
+```
+
+### The `feature.directive.ts`
+
+```typescript
+import {
+  Directive,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewContainerRef,
+} from "@angular/core";
+import { Subscription } from "rxjs";
+import { FeaturesService } from "./feature.service";
+
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: "[feature]",
+  standalone: true,
+})
+export class FeatureDirective implements OnInit, OnDestroy {
+  private viewContainerRef = inject(ViewContainerRef);
+  private templateRef = inject<TemplateRef<unknown>>(TemplateRef<unknown>);
+  private featureService = inject(FeaturesService);
+  private subscription?: Subscription;
+
+  public feature = input.required<string>();
+
+  public ngOnInit(): void {
+    this.subscription = this.featureService
+      .getEnabledFeatures()
+      .subscribe((features) =>
+        this.updateView(features.includes(this.feature()))
+      );
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  private updateView(shouldCreate: boolean): void {
+    if (shouldCreate) {
+      this.viewContainerRef.createEmbeddedView(this.templateRef);
+    } else {
+      this.viewContainerRef.clear();
+    }
+  }
+}
+```
+
+## The MSW Endpoint:
+
+I use Mock Service Workers during development. The handler for this looks like this (`/src/mocks/features-handler.ts`):
+
+```typescript
+import { http, HttpResponse } from "msw";
+
+const features = ["golf"];
+const handlers = [
+  http.get("/api/features", () => {
+    return HttpResponse.json(features);
+  }),
+];
+
+export default handlers;
+```
+
+And expose it from the `handlers.ts`:
+
+```typescript
+import features from "./features-handler";
+export const handlers = [...features];
+```
+
+## Examples of Usage
+
+### In a Route:
+
+```typescript
+import { Routes } from "@angular/router";
+import { GolfComponent } from "./golf.page";
+import { canMatchFeature } from "../../feature-management/feature.guard";
+
+export const GOLF_ROUTES: Routes = [
+  {
+    path: "golf",
+    component: GolfComponent,
+    canMatch: [canMatchFeature("golf")],
+  },
+];
+```
+
+### Using the Structural Directive:
+
+```typescript
+   <li *feature="'golf'"><a routerLink="/golf">Golf</a></li>
 ```
