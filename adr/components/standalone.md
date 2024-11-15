@@ -1,9 +1,4 @@
-# 200 Components
-
-In Angular, components represent areas of user interface. As such, they are a
-_primary_ focus of our work.
-
-## 201 Decision: Use Standalone Components
+# Use Standalone Components
 
 Historically, at least since soon after Angular 2 shipped, components had to be
 part of an abstraction called an _Angular Module_. The `NgModule` would declare
@@ -36,13 +31,27 @@ Standalone components declare all their dependencies, handle lazy-loading
 appropriately, and are much cleaner and easier to work with, despite a slight
 increase in "import" noise.
 
-## 202 Decision: Prefer Inline Templates and Inline Styles
+## An Example
 
-This is not a hard rule, but is included here because using inline styles and
-inline templates in your components is a good way to push developers to a best
-practice, namely **Components Should Be Small and Focused**.
+```typescript
+import { Component } from "@angular/core";
+import { NavBarComponent } from "./components/nav-bar/nav-bar.component";
+import { DemosComponent } from "./demos/demos.component";
+import { RouterOutlet } from "@angular/router";
+import { FeatureDirective } from "@shared";
 
-Using the `template:` property instead of the `templateUrl:` property (and
-associated properties for styles) within components essentially does the same
-thing. If you use URLs, during compilation, those resources are _inlined_ in
-your code.
+@Component({
+  selector: "app-root",
+  standalone: true, // as of Angular 19, true is the default.
+  template: `
+    <app-nav-bar />
+    <div *feature="'home-page-content'">This is something I'm working on.</div>
+    <main class="container mx-auto">
+      <router-outlet />
+    </main>
+  `,
+  styles: [],
+  imports: [NavBarComponent, DemosComponent, RouterOutlet, FeatureDirective],
+})
+export class AppComponent {}
+```
