@@ -5,10 +5,14 @@ export default defineConfig({
   title: "Applied Angular",
   description: "Hypertheory Training",
   ignoreDeadLinks: true,
+  head: [
+    [ 'script', { src: 'https://player.vimeo.com/api/player.js'}]
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
+      { text: "Pre-Work", link: "/docs/pre-work"},
       { text: "Course", link: "/docs" },
       { text: "ADR", link: "/adr" },
       { text: "Guides", link: "/guides" },
@@ -19,11 +23,21 @@ export default defineConfig({
 
     sidebar: {
       "/docs/": [
+      
         {
           text: "Docs",
           link: "/docs/",
           items: [
             { text: "Outline", link: "/docs/outline" },
+            { text: "Pre-Work", link: "/docs/pre-work", 
+
+              items: [
+                { text: 'Overview', link: '/docs/pre-work'},
+                { text: 'Create Project', link:'/docs/pre-work/01-project'},
+                { text: 'Components w/Inputs', link: '/docs/pre-work/02-components-inputs'},
+                { text: 'Components w/Outputs', link: '/docs/pre-work/03-components-outputs'},
+              ]
+            },
             { text: "Why Angular", link: "/docs/applied" },
             { text: "Building Blocks", link: "/docs/building-blocks" },
             {
