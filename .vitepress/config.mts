@@ -12,9 +12,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Pre-Work", link: "/docs/pre-work"},
       { text: "Course", link: "/docs" },
-      { text: "ADR", link: "/adr" },
+      { text: "TDR", link: "/adr" },
       { text: "Guides", link: "/guides" },
     ],
     search: {
@@ -29,15 +28,7 @@ export default defineConfig({
           link: "/docs/",
           items: [
             { text: "Outline", link: "/docs/outline" },
-            { text: "Pre-Work", link: "/docs/pre-work", 
-
-              items: [
-                { text: 'Overview', link: '/docs/pre-work'},
-                { text: 'Create Project', link:'/docs/pre-work/01-project'},
-                { text: 'Components w/Inputs', link: '/docs/pre-work/02-components-inputs'},
-                { text: 'Components w/Outputs', link: '/docs/pre-work/03-components-outputs'},
-              ]
-            },
+  
             { text: "Why Angular", link: "/docs/applied" },
             { text: "Building Blocks", link: "/docs/building-blocks" },
             {
@@ -59,18 +50,17 @@ export default defineConfig({
             { text: "State", link: "/docs/state" },
             { text: "Routing", link: "/docs/routing" },
             { text: "Legacy Angular", link: "/docs/legacy/" },
-            { text: "Scenarios", link: "/docs/scenarios/software" },
           ],
         },
       ],
       "/adr/": [
         {
-          text: "ADR",
+          text: "TDR",
           items: [
             { text: "List", link: "/adr/" },
-            { text: "100 BFF", link: "/adr/bff" },
+          
             { text: "200 Components", link: "/adr/components" },
-            { text: "400 Auth", link: "/adr/auth" },
+          
           ],
         },
       ],
@@ -78,11 +68,15 @@ export default defineConfig({
         {
           text: "Guides",
           items: [
-            { text: "List", link: "/guides/" },
-            { text: "BFF .NET", link: "/guides/bff-server" },
+           
+           
             { text: "Ng Setup", link: "/guides/angular-setup" },
+            { text: 'Template', link: '/guides/creating'},
             { text: "MSW", link: "/guides/msw" },
             { text: "Feature Flags", link: "/guides/feature-flags" },
+            { text: "Component Inputs/ Outputs", link: "/guides/components"},
+            { text: 'Directives', link: '/guides/directives'},
+            { text: 'Zod for API Validation', link: '/guides/zod'}
           ],
         },
       ],

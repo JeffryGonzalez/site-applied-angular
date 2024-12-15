@@ -11,7 +11,7 @@ hero:
       text: Course Materials
       link: /docs
     - theme: alt
-      text: ADRs
+      text: TDRs
       link: /adr
     - theme: alt
       text: Guides

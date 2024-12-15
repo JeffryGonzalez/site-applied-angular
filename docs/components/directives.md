@@ -106,5 +106,8 @@ The constructor takes an `ElementRef<HtmlButtonElement>` that will get a referen
 In the class we will explore more advanced ways to create a UI library using attribute Directives.
 
 
+## A More Extensive Example
+
+Moving the directive to the `src/app/shared` folder structure.
 
 

@@ -1,7 +1,8 @@
-# Architectural Decision Records
+# Technical Discussion Records
 
-Architectural Decision Records (ADRs) See
-[https://adr.github.io/](https://adr.github.io/) are a common technique for a
+Based on Architectural Decision Records (ADRs) See
+[https://adr.github.io/](https://adr.github.io/), Technical Discussion Records
+ are a common technique for a
 team to share the decisions made on the architecture and technical
 implementation of an application, especially when there are multiple _choices_
 that could be made for a certain approach.
@@ -43,11 +44,3 @@ Prefer to organize your application's source code around business-facing feature
 Since Angular applications are a tool to manipulate (and provide) the Document Object Model, the DOM is a hierarchy, and our Angular components mirror that hierarchy.
 
 The root of almost all Angular applications is the `app-root` (the `ApplicationComponent`). We will call this the "Application".
-
-## [100 Backend for Frontend (BFF)](./bff.md)
-
-In this application we will implement our app with a BFF pattern.
-
-## [400 Authn and Authz](./auth.md)
-
-We will use OIDC and Oauth2 for authentication.

@@ -7,38 +7,57 @@ The ideal is a component that has only a single line of code that imports a Sign
 ## An Example
 
 ```typescript
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from "@angular/core";
-import { DecrementButtonDirective, IncrementButtonDirective } from "@shared";
-import { CounterStore } from "../services/counter.store";
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CounterStore } from '../services/counter.store';
+import { ButtonDirective } from '@shared';
 
 @Component({
-  selector: "app-ui",
-  standalone: true,
+  selector: 'app-counter-ui',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IncrementButtonDirective, DecrementButtonDirective],
+  imports: [ButtonDirective],
   template: `
-    <div data-testid="counter-feature-ui">
+    <div class="mt-12 ">
       <button
+        class="mr-4 btn-square"
         [disabled]="store.decrementDisabled()"
         (click)="store.decrement()"
-        appDecrementButton
+        appButton
+        shape="circle"
+        kind="secondary"
       >
         -
       </button>
       <span data-testid="current">{{ store.current() }}</span>
-      <button appIncrementButton (click)="store.increment()">+</button>
+      <button
+        class="ml-4"
+        (click)="store.increment()"
+        appButton
+        shape="circle"
+        [kind]="store.current() > 20 ? 'primary' : 'error'"
+      >
+        +
+      </button>
     </div>
-
-    <div data-testid="fizzBuzz">{{ store.fizzBuzz() }}</div>
+    <div>
+      @switch (store.fizzBuzz()) {
+        @case ('Fizz') {
+          <p class="font-bold text-2xl text-green-400">Fizz</p>
+        }
+        @case ('Buzz') {
+          <p class="font-bold text-2xl text-orange-400">Buzz</p>
+        }
+        @case ('FizzBuzz') {
+          <p class="font-bold text-3xl text-green-800 animate-pulse">
+            FIZZBUZZ!
+          </p>
+        }
+      }
+    </div>
   `,
   styles: ``,
 })
 export class UiComponent {
   store = inject(CounterStore);
 }
+
 ```
