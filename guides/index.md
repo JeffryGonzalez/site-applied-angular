@@ -25,3 +25,5 @@ Setting up Mock Service Workers in your Angular application.
 ## :link: [Zod for API Response Validation](./zod.md)
 
 ## :link: [Signal Store Features](./signal-store-features.md)
+
+## :link: [Snippets](./snippets.md)

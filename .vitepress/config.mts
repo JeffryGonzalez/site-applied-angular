@@ -76,7 +76,8 @@ export default defineConfig({
             { text: "Feature Flags", link: "/guides/feature-flags" },
             { text: "Component Inputs/ Outputs", link: "/guides/components"},
             { text: 'Directives', link: '/guides/directives'},
-            { text: 'Zod for API Validation', link: '/guides/zod'}
+            { text: 'Zod for API Validation', link: '/guides/zod'},
+            { text: 'Code Snipeets', link: '/guides/snippets'}
           ],
         },
       ],
