@@ -59,7 +59,8 @@ export default defineConfig({
           items: [
             { text: "List", link: "/adr/" },
           
-            { text: "200 Components", link: "/adr/components" },
+            { text: "Components", link: "/adr/components" },
+            { text: "Services", link: "/adr/services"}
           
           ],
         },
