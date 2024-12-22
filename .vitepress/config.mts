@@ -22,12 +22,12 @@ export default defineConfig({
 
     sidebar: {
       "/docs/": [
-      
         {
           text: "Docs",
           link: "/docs/",
           items: [
-            { text: "Outline", link: "/docs/outline" },
+            { text: "Course Outline", link: "/docs/outline" },
+            { text: "What's New", link: '/docs/new'},
   
             { text: "Why Angular", link: "/docs/applied" },
             { text: "Building Blocks", link: "/docs/building-blocks" },

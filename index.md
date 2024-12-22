@@ -16,6 +16,9 @@ hero:
     - theme: alt
       text: Guides
       link: /guides
+    - theme: alt
+      text: What's New
+      link: /docs/new
 
-features:
+
 ---
