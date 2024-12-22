@@ -50,6 +50,24 @@ The `@Injectable()` decorator on services is largely  not needed, and it's use i
 > [!WARNING] Finally
 > As an application developer, there is no reason to  use the `@Injectable({providedIn: 'root'})`  pattern.  This was added for *library* developers that provide a library with lots of different services, and makes it so that unused services are not added to the bundle of the compiled application. With it,  you  do not need to  add the service to any  providers for it  to be injected, in essence getting the same end result  of putting the service in the `app.config.ts`'s `providers:[]` array. It will be global, and live as long as  your application. However, any subsequent additions of this service to *any* provider array will still create a separate instance of  that service at that level. A lot of time has been wasted by me and many  other developers tracking down service lifetimes, etc. By removing the option to use `providedIn: 'root'` in your code, that means you can simply look up  the hierarchy of `provider:[]`  arrays to find where the instances are being created. 
 
+I recommend an ESLint rule to warn you (or give you an error) about this usage:
+
+```javascript
+"no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "Decorator[expression.callee.name='Injectable'] > CallExpression[arguments.length=1] > ObjectExpression > Property[key.name='providedIn'][value.value='root']",
+          message:
+            "Are you sure you don't want to just create a provider for this?",
+        },
+      ],
+```
+
+This will give  you an eslint warning if you are using `@Injectable({providedIn: 'root'})`.
+
+
+
 
 ## Video Overview Of Service Registration
 
