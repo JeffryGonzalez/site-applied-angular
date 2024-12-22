@@ -1,8 +1,14 @@
 # Signal In a Service
 
 We can create a service to encapsulate the state for the counter and the history.
+
+> [!DANGER] This is an example.
+> I don't really recommend creating your own services to encapsulate state, especially when that
+> state may involve async operations (APIs, etc.). Use something like the [Ngrx SignalStore](https://ngrx.io) instead.
+
+
 ```typescript
-import { Injectable, effect, signal } from '@angular/core';
+import { effect, signal } from '@angular/core';
 type CounterHistoryOp = 'increment' | 'decrement' | 'reset';
 export type CounterHistoryItem = {
   before: number;
@@ -10,7 +16,7 @@ export type CounterHistoryItem = {
   op: CounterHistoryOp;
   when: string;
 };
-@Injectable({ providedIn: 'root' })
+
 export class CounterService {
   private readonly _current = signal(0);
   private readonly _history = signal<CounterHistoryItem[]>([]);
