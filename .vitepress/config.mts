@@ -59,7 +59,6 @@ export default defineConfig({
           items: [
             { text: "List", link: "/adr/" },
           
-            { text: "Components", link: "/adr/components" },
             { text: "Services", link: "/adr/services"}
           
           ],
@@ -83,6 +82,6 @@ export default defineConfig({
         },
       ],
     },
-    socialLinks: [{ icon: "github", link: "https://www.hypertheory.com" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/jeffrygonzalez/applied-angular-site" }],
   },
 });
