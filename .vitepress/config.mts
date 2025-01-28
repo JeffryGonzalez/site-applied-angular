@@ -82,6 +82,6 @@ export default defineConfig({
         },
       ],
     },
-    socialLinks: [{ icon: "github", link: "https://github.com/jeffrygonzalez/applied-angular-site" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/JeffryGonzalez/site-applied-angular" }],
   },
 });
