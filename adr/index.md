@@ -2,7 +2,10 @@
 
 See [About](./about.md) for information on Architectural Decision Records and Technical Discussion Records.
 
+## Chunking And Lazy Loading
 
+To facilitate frequent updates to code which is enabled by CI/CD, we will use the following guidelines.
+[Chunking and Structuring Compiled Angular Applications](./chunking)
 
 ## Components
 
