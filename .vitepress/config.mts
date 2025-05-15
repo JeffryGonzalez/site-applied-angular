@@ -59,7 +59,8 @@ export default defineConfig({
           items: [
             { text: "List", link: "/adr/" },
           
-            { text: "Services", link: "/adr/services"}
+            { text: "Services", link: "/adr/services"},
+            { text: "Singleton Service", link: "/adr/services/singleton"},
           
           ],
         },
@@ -77,7 +78,7 @@ export default defineConfig({
             { text: "Component Inputs/ Outputs", link: "/guides/components"},
             { text: 'Directives', link: '/guides/directives'},
             { text: 'Zod for API Validation', link: '/guides/zod'},
-            { text: 'Code Snipeets', link: '/guides/snippets'}
+            { text: 'Code Snippets', link: '/guides/snippets'}
           ],
         },
       ],
