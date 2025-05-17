@@ -61,6 +61,8 @@ export default defineConfig({
           
             { text: "Services", link: "/adr/services"},
             { text: "Singleton Service", link: "/adr/services/singleton"},
+            { text: "Chunking", link: "/adr/chunking"},
+            { text: "Server Data", link: "/adr/server-data"},
           
           ],
         },
