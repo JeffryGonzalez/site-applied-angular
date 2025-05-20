@@ -77,7 +77,6 @@ export class PessimisticComponent {
         this.modalMessage.set('Loading...');
         this.showModal.set(true);
         this.modal()?.nativeElement.showModal();
-        console.log(this.modal());
       } else {
         this.modalMessage.set('Loaded');
         this.showModal.set(false);
