@@ -68,6 +68,7 @@ editLink: {
             { text: "State Management", link: "/adr/state", items: [
                 { text: "Overview", link: "/adr/state/state1", items: [
                     { text: "Component and Service", link: "/adr/state/1.component-state" },
+                    { text: 'API Interaction Anti-Patterns', link: 'adr/state/3.api-interactions-anti-patterns'},
                     { text: "Outbox", link: "/adr/state/2.outbox" },
                 ]},
             ]},
