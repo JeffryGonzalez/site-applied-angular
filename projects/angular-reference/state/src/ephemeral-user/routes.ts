@@ -8,7 +8,7 @@ import { SortFilterStoreTwo } from './sort-filter-store-two';
 export const EPHEMERAL_USER_ROUTES: Routes = [
   {
     path: '',
-    providers: [SortFilterStore, SortFilterStoreTwo],
+    providers: [SortFilterStore, SortFilterStoreTwo], // [!code highlight]
     component: EphemeralUserComponent,
     children: [
       {

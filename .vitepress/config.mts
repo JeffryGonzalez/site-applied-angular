@@ -19,7 +19,9 @@ export default defineConfig({
     search: {
       provider: "local",
     },
-
+editLink: {
+      pattern: 'https://github.com/JeffryGonzalez/site-applied-angular/edit/main/:path'
+    },
     sidebar: {
       "/docs/": [
         {
@@ -66,6 +68,7 @@ export default defineConfig({
             { text: "State Management", link: "/adr/state", items: [
                 { text: "Overview", link: "/adr/state/state1", items: [
                     { text: "Component and Service", link: "/adr/state/1.component-state" },
+                    { text: "Outbox", link: "/adr/state/2.outbox" },
                 ]},
             ]},
           

@@ -9,6 +9,11 @@ State can be *ephemeral* (it comes and goes), or *persistent* (data stored somew
 
 ## Ephemeral User Application Data
 
+> [!TIP] For Some Examples of the Concepts Discussed Here
+> See [Component and Server State](./1.component-state)
+
+
+
 This kind of data has to do with our management of what the user is experiencing while running an *instance* of our application. In other words, a *particular* user is running our application on their device, and manipulates it through the UI affordances we provide to put the application in a particular *mode*.
 
 Examples of ephemeral data *might* be:
@@ -156,6 +161,13 @@ Cache-Control: no-cache // [!code highlight]
 If you are concerned about concurrency, use periodic polling to refresh the data from the API (or use Server Sent Events or Web Sockets, discussed below). Make sure you disable the polling while you are updating the data because of changes on the client, though. You can get lost updates.
 
 ## Read-Only Reference Data
+
+## Ephemeral User Application Data
+
+> [!TIP] For Some Examples of the Concepts Discussed Here
+> See [Outbox Pattern](./2.outbox)
+
+
 
 We build applications so that our users can accomplish things we want them to accomplish. For example, if we are writing an e-commerce style application, we want them to buy products. In order to do the thing we want the to do, we usually have to provide them supporting data for making that operation, or deciding if they'd want to. So, I can't place an order for something unless you know what that *something* is. What is the price? When will it ship? What are the reviews, etc.
 

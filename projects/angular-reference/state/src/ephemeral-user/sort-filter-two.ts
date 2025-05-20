@@ -82,7 +82,7 @@ type ApiProducts = [{ id: number; name: string; price: number }];
   styles: ``,
 })
 export class SortFilterTwoComponent {
-  store = inject(SortFilterStore);
+  store = inject(SortFilterStore); // [!code highlight]
 
   products = resource<ApiProducts, unknown>({
     loader: () => fetch('https://some-api/products').then((res) => res.json()),
