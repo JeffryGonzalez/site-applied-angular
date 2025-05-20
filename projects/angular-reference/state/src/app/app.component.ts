@@ -32,6 +32,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             >
               Outbox
             </a>
+            <a
+              routerLink="anti-patterns"
+              class="link"
+              [routerLinkActive]="['uppercase']"
+            >
+              API Patterns
+            </a>
           </div>
         </div>
         <div class="w-full h-full">

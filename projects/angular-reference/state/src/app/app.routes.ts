@@ -13,6 +13,11 @@ export const routes: Routes = [
       import('../ephemeral-user/routes').then((m) => m.EPHEMERAL_USER_ROUTES),
   },
   {
+    path: 'anti-patterns',
+    loadChildren: () =>
+      import('../anti-patterns/routes').then((m) => m.ANTI_PATTERN_ROUTES),
+  },
+  {
     path: 'outbox',
     loadChildren: () =>
       import('../shared-state/routes').then((m) => m.SHARED_STATE_ROUTES),
