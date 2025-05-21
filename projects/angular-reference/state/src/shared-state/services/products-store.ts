@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
-import { computed, effect, inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -20,12 +20,11 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { mergeMap, pipe, switchMap, tap } from 'rxjs';
 import {
   setError,
-  setIsBackgroundFetching,
   setIsIdle,
   setIsLoading,
   setIsMutating,
 } from './loading-modes';
-import { mapToNonPending, withOutBox } from './outbox';
+import { ChangeOps, withOutBox } from './outbox';
 import { ProductsApi } from './product-api';
 type ApiProduct = { id: string; name: string; price: number };
 const SORT_KEYS = ['name', 'price'] as const;
@@ -144,20 +143,31 @@ export const ProductsStore = signalStore(
   }),
   withComputed((state) => ({
     productList: computed(() => {
-      const products = state.entities().map(mapToNonPending);
-      const changes = state.allPendingOutboxChanges();
+      const products = state.entities();
 
-      const resultMap = new Map<string, ApiProduct & { pending: boolean }>();
-      products.forEach((product) => {
-        resultMap.set(product.id, product);
-      });
-      changes.forEach((product) => {
-        resultMap.set(product.id, { ...product, pending: true });
-      });
+      const changes = state.pendingOutbox();
 
-      const all = Array.from(resultMap.values());
+      const additions = changes['add'] || [];
+      const deletions = changes['delete'] || [];
+      const updates = changes['update'] || [];
+      const stable = state.entities();
+
+      // create a new array with the items from additions, deletions, and updates replacing the stable items
+      const all = [
+        ...additions,
+        ...stable.filter((p) => !deletions.some((d) => d.id === p.id)),
+        ...updates,
+      ];
+
+      const changeMap = {
+        stable: stable.map((p) => p.id),
+        additions: additions.map((p) => p.id),
+        deletions: deletions.map((p) => p.id),
+        updates: updates.map((p) => p.id),
+      };
+
       if (state.sortKey() === 'name') {
-        return all.sort((a, b) => {
+        all.sort((a, b) => {
           if (state.sortOrder() === 'asc') {
             return a.name.localeCompare(b.name);
           } else {
@@ -166,7 +176,7 @@ export const ProductsStore = signalStore(
         });
       }
       if (state.sortKey() === 'price') {
-        return all.sort((a, b) => {
+        all.sort((a, b) => {
           if (state.sortOrder() === 'asc') {
             return a.price - b.price;
           } else {
@@ -174,7 +184,7 @@ export const ProductsStore = signalStore(
           }
         });
       }
-      return all;
+      return { products: all || [], changes: changeMap };
     }),
   })),
   withHooks({
@@ -188,17 +198,17 @@ export const ProductsStore = signalStore(
       patchState(store, setIsLoading());
       store._loadProducts();
 
-      effect((cleanup) => {
-        const timer = setInterval(() => {
-          if (store.requestStatus() === 'idle') {
-            patchState(store, setIsBackgroundFetching());
-            store._loadProducts();
-          }
-        }, 5000);
-        cleanup(() => {
-          clearInterval(timer);
-        });
-      });
+      //   effect((cleanup) => {
+      //     const timer = setInterval(() => {
+      //       if (store.requestStatus() === 'idle') {
+      //         patchState(store, setIsBackgroundFetching());
+      //         store._loadProducts();
+      //       }
+      //     }, 5000);
+      //     cleanup(() => {
+      //       clearInterval(timer);
+      //     });
+      //   });
     },
   }),
 );

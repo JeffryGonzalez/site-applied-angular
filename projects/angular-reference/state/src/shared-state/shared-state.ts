@@ -18,6 +18,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
         Products
       </p>
     } @else {
+      <pre>Pending Changes{{ store.pendingOutbox() | json }} </pre>
       <form
         [formGroup]="form"
         (ngSubmit)="addProduct()"
@@ -79,17 +80,16 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
             </tr>
           </thead>
           <tbody>
-            @for (product of store.productList(); track product.id) {
+            @for (product of store.productList().products; track product.id) {
+              @let status = hasStatus(product.id);
               <tr class="m-8">
-                <td [attr.class]="product.pending ? 'italic opacity-50' : ''">
-                  {{ product.name }}
-                </td>
-                <td [attr.class]="product.pending ? 'italic opacity-50' : ''">
+                <td>{{ product.name }} Status {{ status }}</td>
+                <td>
                   {{ product.price | currency }}
                 </td>
                 <td>
-                  @if (product.pending) {
-                    <span class="text-accent">Pending...</span>
+                  @if (status !== 'stable') {
+                    <span class="text-accent">Pending... {{ status }}</span>
                   } @else {
                     <span class="flex flex-row gap-2">
                       <button
@@ -135,9 +135,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                 <p>Deletions:</p>
                 <ul class="pl-4">
                   @for (
-                    change of store
-                      .allPendingOutboxChangesMap()
-                      .get('deletions');
+                    change of store.pendingOutbox()['delete'];
                     track change.id
                   ) {
                     <li>
@@ -155,7 +153,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                 <p>Updates:</p>
                 <ul class="pl-4">
                   @for (
-                    change of store.allPendingOutboxChangesMap().get('updates');
+                    change of store.pendingOutbox()['update'];
                     track change.id
                   ) {
                     <li>
@@ -172,9 +170,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                 <p>Additions:</p>
                 <ul class="pl-4">
                   @for (
-                    change of store
-                      .allPendingOutboxChangesMap()
-                      .get('additions');
+                    change of store.pendingOutbox()['add'];
                     track change.id
                   ) {
                     <li>
@@ -185,6 +181,10 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                       No additions pending
                     </li>
                   }
+                  <li>
+                    <pre>{{ store.pendingOutbox() | json }} </pre>
+                  </li>
+                  <li></li>
                 </ul>
               </div>
             </div>
@@ -210,6 +210,15 @@ export class SharedStateComponent {
     name: new FormControl<string>(''),
     price: new FormControl<number>(0),
   });
+  hasStatus(id: string) {
+    if (this.store.productList().changes.deletions.includes(id))
+      return 'deleting';
+    if (this.store.productList().changes.updates.includes(id))
+      return 'updating';
+    if (this.store.productList().changes.additions.includes(id))
+      return 'adding';
+    return 'stable';
+  }
   addProduct() {
     const newProduct = this.form.value as { name: string; price: number };
     this.store.addProduct(newProduct);
