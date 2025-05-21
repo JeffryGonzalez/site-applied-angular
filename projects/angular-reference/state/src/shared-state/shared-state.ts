@@ -18,7 +18,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
         Products
       </p>
     } @else {
-      <pre>Pending Changes{{ store.pendingOutbox() | json }} </pre>
+      <pre>Pending Changes{{ store.outbox() | json }} </pre>
       <form
         [formGroup]="form"
         (ngSubmit)="addProduct()"
@@ -134,10 +134,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
               <div class="pl-4">
                 <p>Deletions:</p>
                 <ul class="pl-4">
-                  @for (
-                    change of store.pendingOutbox()['delete'];
-                    track change.id
-                  ) {
+                  @for (change of store.outbox()['delete']; track change.id) {
                     <li>
                       {{ change.id }} {{ change.name }} {{ change.price }}
                     </li>
@@ -152,10 +149,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
               <div class="pl-4">
                 <p>Updates:</p>
                 <ul class="pl-4">
-                  @for (
-                    change of store.pendingOutbox()['update'];
-                    track change.id
-                  ) {
+                  @for (change of store.outbox()['update']; track change.id) {
                     <li>
                       {{ change.id }} {{ change.name }} {{ change.price }}
                     </li>
@@ -169,10 +163,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
               <div class="pl-4">
                 <p>Additions:</p>
                 <ul class="pl-4">
-                  @for (
-                    change of store.pendingOutbox()['add'];
-                    track change.id
-                  ) {
+                  @for (change of store.outbox()['add']; track change.id) {
                     <li>
                       {{ change.id }} {{ change.name }} {{ change.price }}
                     </li>
@@ -182,7 +173,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                     </li>
                   }
                   <li>
-                    <pre>{{ store.pendingOutbox() | json }} </pre>
+                    <pre>{{ store.outbox() | json }} </pre>
                   </li>
                   <li></li>
                 </ul>

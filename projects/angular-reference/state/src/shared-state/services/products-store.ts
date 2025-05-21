@@ -145,7 +145,7 @@ export const ProductsStore = signalStore(
     productList: computed(() => {
       const products = state.entities();
 
-      const changes = state.pendingOutbox();
+      const changes = state.outbox();
 
       const additions = changes['add'] || [];
       const deletions = changes['delete'] || [];

@@ -26,7 +26,7 @@ export function withOutBox<T extends { id: string }>() {
         delete: undefined,
         update: undefined,
       } as ApiOps<T>,
-      pendingOutbox: {} as Record<ChangeOps, T[]>,
+      outbox: {} as Record<ChangeOps, T[]>,
     }),
     withMethods((state) => {
       return {
@@ -34,66 +34,66 @@ export function withOutBox<T extends { id: string }>() {
           patchState(state, { _apiMethods: api });
         },
         _addOutboxDeletion: (el: T) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
           changes['delete'] = [el, ...(changes['delete'] || [])];
 
           patchState(state, {
-            pendingOutbox: changes,
+            outbox: changes,
             pendingChangeCount: state.pendingChangeCount() + 1,
           });
         },
         _removeOutboxDeletion: (el: T) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
           const deletions = changes['delete'];
           if (deletions) {
             const newDeletions = deletions.filter((d) => d.id !== el.id);
             changes['delete'] = newDeletions;
             patchState(state, {
-              pendingOutbox: changes,
+              outbox: changes,
               pendingChangeCount: state.pendingChangeCount() - 1,
               requestStatus: 'idle',
             });
           }
         },
         _addOutboxUpdate: (update: T) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
           changes['update'] = [...(changes['update'] || []), update];
           patchState(state, {
-            pendingOutbox: changes,
+            outbox: changes,
             pendingChangeCount: state.pendingChangeCount() + 1,
           });
         },
         _removeOutboxUpdate: (update: T) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
 
           const newUpdates = changes['update'].filter(
             (d) => d.id !== update.id,
           );
           changes['update'] = newUpdates;
           patchState(state, {
-            pendingOutbox: changes,
+            outbox: changes,
             pendingChangeCount: state.pendingChangeCount() - 1,
             requestStatus: 'idle',
           });
         },
         _addOutboxAddition: (tempId: string, addition: Omit<T, 'id'>) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
 
           const updates = changes['add'] || [];
           changes['add'] = [...updates, { ...addition, id: tempId } as T];
 
           patchState(state, {
-            pendingOutbox: changes,
+            outbox: changes,
             pendingChangeCount: state.pendingChangeCount() + 1,
           });
         },
         _removeOutboxAddition: (tempId: string) => {
-          const changes = state.pendingOutbox();
+          const changes = state.outbox();
 
           const newAdditions = changes['add'].filter((d) => d.id !== tempId);
           changes['add'] = newAdditions;
           patchState(state, {
-            pendingOutbox: changes,
+            outbox: changes,
             pendingChangeCount: state.pendingChangeCount() - 1,
             requestStatus: 'idle',
           });
@@ -109,7 +109,7 @@ export function withOutBox<T extends { id: string }>() {
 
           if (idle && hasPendingChanges) {
             // do the additions, then the updates, then the deletions
-            const outbox = store.pendingOutbox();
+            const outbox = store.outbox();
             if (outbox['add']) {
               const additions = outbox['add'];
               if (additions && store._apiMethods().add) {
@@ -129,7 +129,7 @@ export function withOutBox<T extends { id: string }>() {
                 const updateMe = updates.pop();
                 outbox['update'] = updates;
                 patchState(store, {
-                  pendingOutbox: outbox,
+                  outbox: outbox,
                   requestStatus: 'mutating',
                 });
 
@@ -147,7 +147,7 @@ export function withOutBox<T extends { id: string }>() {
                 store._apiMethods().delete!(deleteMe!);
                 patchState(store, {
                   requestStatus: 'mutating',
-                  pendingOutbox: outbox,
+                  outbox: outbox,
                 });
               }
               return;
