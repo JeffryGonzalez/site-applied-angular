@@ -103,13 +103,13 @@ export function withOutBox<T extends { id: string }>() {
           });
         },
         _removeOutboxAddition: (tempId: string) => {
-          const newAdditions = state.additions().filter((a) => {
+          const newDeletions = state.additions().filter((a) => {
             if ('id' in a) {
               return a.id !== tempId;
             }
             return true;
           });
-          patchState(state, { additions: newAdditions });
+          patchState(state, { deletions: newDeletions });
         },
       };
     }),
