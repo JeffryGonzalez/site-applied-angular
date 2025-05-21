@@ -1,16 +1,14 @@
 import { CurrencyPipe } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
-  resource,
+  Component,
+  ElementRef,
+  effect,
+  inject,
   signal,
   viewChild,
-  ElementRef,
-  effect, inject,
 } from '@angular/core';
-import {ProductsStore} from "../shared-state/services/products-store";
-import {ProductsApi} from "./product-api";
-import {OptimisticStore} from "./optimistic-store";
+import { OptimisticStore } from './optimistic-store';
 
 @Component({
   selector: 'app-anti-patterns-optimistic',
@@ -21,8 +19,8 @@ import {OptimisticStore} from "./optimistic-store";
     <!-- Open the modal using ID.showModal() method -->
 
     <div class="w-fit h-4">
-      @if(store.mutating()) {
-      <progress class="progress progress-primary w-56"></progress>
+      @if (store.mutating()) {
+        <progress class="progress progress-primary w-56"></progress>
       }
     </div>
     <p>Optimistic API Interactions</p>
@@ -37,7 +35,7 @@ import {OptimisticStore} from "./optimistic-store";
     </dialog>
 
     <div>
-      @if(store.errorLog().length > 0) {
+      @if (store.errorLog().length > 0) {
         <div class="alert alert-error">
           <div>
             <span>Errors</span>
@@ -47,7 +45,6 @@ import {OptimisticStore} from "./optimistic-store";
               <li>{{ error }}</li>
             }
           </ul>
-          <button (click)="store.load()" class="btn btn-error">Reload</button>
         </div>
       }
     </div>
@@ -71,8 +68,6 @@ import {OptimisticStore} from "./optimistic-store";
         }
       </tbody>
     </table>
-
-
   `,
   styles: ``,
 })
@@ -84,7 +79,7 @@ export class OptimisticComponent {
 
   store = inject(OptimisticStore);
 
-   delete(id: string) {
+  delete(id: string) {
     this.store.delete(id);
   }
 

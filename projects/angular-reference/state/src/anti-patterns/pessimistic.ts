@@ -59,7 +59,7 @@ export class PessimisticComponent {
   });
 
   async delete(id: string) {
-    this.modalMessage.set('Deleting...');
+    this.modalMessage.set(`Deleting Product ${id}...`);
     this.showModal.set(true);
     this.modal()?.nativeElement.showModal();
     await fetch('https://some-api/products/' + id, {
@@ -78,7 +78,6 @@ export class PessimisticComponent {
         this.showModal.set(true);
         this.modal()?.nativeElement.showModal();
       } else {
-        this.modalMessage.set('Loaded');
         this.showModal.set(false);
         this.modal()?.nativeElement.close();
       }
