@@ -1,4 +1,5 @@
 import {
+  HttpContext,
   HttpContextToken,
   HttpEvent,
   HttpHandlerFn,
@@ -26,22 +27,22 @@ export function addRequestToOutbox(
   if (!requestId) {
     console.error('Request ID not found in context');
   }
-  if (stage === 'outboxed') {
-    const payload: RequestEntity = {
-      id: requestId,
-      when: new Date().toISOString(),
-      req: req.clone({
-        context: req.context.set(OUTBOX_SOURCED, 'outboxed'),
-      }),
-      stage: 'outboxed',
-    };
-    store.dispatch(
-      OutboxActions.requestHandled({
-        payload,
-      }),
-    );
-    return EMPTY;
-  }
+  // if (stage === 'outboxed') {
+  //   const payload: RequestEntity = {
+  //     id: requestId,
+  //     when: new Date().toISOString(),
+  //     req: req.clone({
+  //       context: req.context.set(OUTBOX_SOURCED, 'outboxed'),
+  //     }),
+  //     stage: 'outboxed',
+  //   };
+  //   store.dispatch(
+  //     OutboxActions.requestHandled({
+  //       payload,
+  //     }),
+  //   );
+  //   return EMPTY;
+  // }
   if (stage === 'sent') {
     const payload: RequestEntity = {
       id: requestId,
@@ -49,7 +50,7 @@ export function addRequestToOutbox(
       req: req.clone({
         context: req.context.set(OUTBOX_SOURCED, 'sent'),
       }),
-      stage: 'sent',
+      stage: 'fulfilled',
     };
     // if we have seen this request before, we need to update the outbox
     store.dispatch(
@@ -71,6 +72,7 @@ export function addRequestToOutbox(
     stage: 'intercepted',
   };
   payload.req.context.set(OUTBOX_SOURCED_ID, id);
+
   store.dispatch(
     OutboxActions.requestHandled({
       payload,

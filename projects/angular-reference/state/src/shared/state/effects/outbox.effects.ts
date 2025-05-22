@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, mergeMap } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs';
 import { OutboxActions } from '../actions';
 import { OUTBOX_SOURCED } from '../interceptors';
+import { RequestEntity } from '..';
 export class OutboxEffects {
   #client = inject(HttpClient);
   #actions$ = inject(Actions);
@@ -11,6 +12,7 @@ export class OutboxEffects {
   handleRequest = createEffect(() => {
     return this.#actions$.pipe(
       ofType(OutboxActions.requestHandled),
+      tap((a) => console.log('Outbox Effect', a)),
       map(({ payload: a }) => {
         switch (a.stage) {
           case 'intercepted': {
@@ -23,26 +25,30 @@ export class OutboxEffects {
                 }),
                 stage: 'outboxed',
               };
-
+              return OutboxActions.requestHandled({ payload });
+            }
+            break;
+          }
+          case 'outboxed': {
+            //             case 'outboxed': {
+            if (a.req.method === 'GET' || a.req.method === 'HEAD') {
               return OutboxActions.sendRequestWithoutSideEffect({
-                request: a.request.clone({
-                  context: a.request.context.set(OUTBOX_SOURCED, 'outboxed'),
+                request: a.req.clone({
+                  context: a.req.context.set(OUTBOX_SOURCED, 'sent'),
                 }),
               });
             }
-
-            return OutboxActions.sendRequestWithSideEffect({
-              request: a.request.clone({
-                context: a.request.context.set(OUTBOX_SOURCED, 'outboxed'),
+            return OutboxActions.sendRequestWithoutSideEffect({
+              request: a.req.clone({
+                context: a.req.context.set(OUTBOX_SOURCED, 'sent'),
               }),
             });
-
-            break;
           }
           default: {
             return { type: 'NOOP' };
           }
         }
+        return { type: 'NOOP' };
       }),
     );
   });
@@ -53,11 +59,14 @@ export class OutboxEffects {
         return this.#client.request(a.request).pipe(
           map(() =>
             OutboxActions.requestHandled({
-              request: a.request.clone({
-                context: a.request.context.set(OUTBOX_SOURCED, 'sent'),
-              }),
-              when: new Date().toISOString(),
-              stage: 'sent',
+              payload: {
+                id: a.request.context.get(OUTBOX_SOURCED) || '',
+                req: a.request.clone({
+                  context: a.request.context.set(OUTBOX_SOURCED, 'fulfilled'),
+                }),
+                when: new Date().toISOString(),
+                stage: 'fulfilled',
+              },
             }),
           ),
         );
