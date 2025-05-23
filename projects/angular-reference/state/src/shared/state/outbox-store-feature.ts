@@ -1,38 +1,38 @@
 import { computed, inject, Signal } from '@angular/core';
-import { signalStoreFeature, withComputed, withMethods } from '@ngrx/signals';
-import { globalOutboxStore } from '../services/outbox-store';
-import { RequestEntity } from './reducer';
+import {
+  signalStoreFeature,
+  withComputed,
+  withMethods,
+  withProps,
+} from '@ngrx/signals';
+import { globalOutboxStore } from './outbox-store';
 
 export function withOutbox<T extends { id: string }>(
   name: string,
   entities: Signal<T[]>,
 ) {
-  const outboxStore = inject(globalOutboxStore);
-
   return signalStoreFeature(
     withMethods(() => {
-      return {
-        requestSent: (payload: RequestEntity) =>
-          outboxStore.requestSent(payload),
-        responseReceived: (payload: RequestEntity) =>
-          outboxStore.responseReceived(payload),
-      };
+      return {};
     }),
-    withComputed(() => {
-      const ob = outboxStore.entities().filter((a) => a.name === name);
+    withProps(() => ({
+      ob: inject(globalOutboxStore),
+    })),
+    withComputed((store) => {
+      //  const xx = store.outbox.get();
+      //   const ob = outboxStore.entities().filter((a) => a.name === name);
       return {
         outboxAugmentedList: computed(() => {
-          const deletions = ob
+          const obEntities = store.ob.entities().filter((a) => a.name === name);
+          const deletions = obEntities
             .filter((e) => e.kind === 'deletion')
             .map((e) => e.body as string);
-          const additions = ob
+          const additions = obEntities
             .filter((e) => e.kind === 'addition')
             .map((e) => e.body as T);
-          const updates = ob
-
+          const updates = obEntities
             .filter((e) => e.kind === 'update')
             .map((e) => e.body as T);
-
           const data = entities().map((e) => ({
             item: e,
             meta: {
@@ -44,7 +44,6 @@ export function withOutbox<T extends { id: string }>(
               update: updates.find((u) => u.id === e.id),
             },
           }));
-
           return {
             data,
             isAdding: additions.length > 0,

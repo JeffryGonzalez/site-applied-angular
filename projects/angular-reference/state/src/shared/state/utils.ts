@@ -1,5 +1,5 @@
 import { HttpContext } from '@angular/common/http';
-import { HttpMethod, OUTBOX_SOURCED } from './interceptors';
+import { HttpMethod, OUTBOX_SOURCED } from './types';
 
 export function withOutboxState<T>(
   name: string,

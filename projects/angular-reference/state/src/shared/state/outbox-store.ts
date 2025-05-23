@@ -1,7 +1,7 @@
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { addEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
-import { RequestEntity } from '../state';
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { patchState, signalStore, withMethods } from '@ngrx/signals';
+import { addEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
+import { RequestEntity } from './types';
 
 export const globalOutboxStore = signalStore(
   withEntities<RequestEntity>(),
@@ -12,6 +12,10 @@ export const globalOutboxStore = signalStore(
         patchState(store, addEntity(payload));
       },
       responseReceived: (payload: RequestEntity) => {
+        patchState(store, removeEntity(payload.id));
+      },
+      responseError: (payload: RequestEntity) => {
+        // TODO: handle error
         patchState(store, removeEntity(payload.id));
       },
     };
