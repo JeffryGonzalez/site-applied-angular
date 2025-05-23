@@ -1,4 +1,5 @@
-import { computed, inject, Signal } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -6,6 +7,7 @@ import {
   withComputed,
   withHooks,
   withMethods,
+  withState,
 } from '@ngrx/signals';
 import {
   removeEntity,
@@ -15,13 +17,13 @@ import {
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { map, mergeMap, pipe, switchMap } from 'rxjs';
-import {
-  selectAdditions,
-  selectDeletions,
-  selectUpdates,
-} from '../shared/state';
+import { map, mergeMap, pipe, switchMap, tap } from 'rxjs';
+import { selectOutboxAugmentedList } from '../shared/state/reducer';
 import { ProductsApi } from './product-api';
+const SORT_KEYS = ['name', 'price'] as const;
+type SortKey = (typeof SORT_KEYS)[number];
+const SORT_ORDERS = ['asc', 'desc'] as const;
+type SortOrder = (typeof SORT_ORDERS)[number];
 type ApiProduct = {
   id: string;
   name: string;
@@ -29,15 +31,33 @@ type ApiProduct = {
 };
 export const ProductsStore = signalStore(
   withEntities<ApiProduct>(),
+  withState({
+    sortKey: 'price' as SortKey,
+    sortOrder: 'desc' as SortOrder,
+    isLoading: true,
+  }),
   withMethods((store) => {
     const service = inject(ProductsApi);
     return {
+      setSortKey: (key: SortKey) => {
+        if (store.sortOrder() === 'asc') {
+          patchState(store, { sortKey: key, sortOrder: 'desc' });
+        } else {
+          patchState(store, { sortKey: key, sortOrder: 'asc' });
+        }
+      },
+      setSortOrder: (order: SortOrder) =>
+        patchState(store, { sortOrder: order }),
       load: rxMethod<void>(
         pipe(
+          tap(() => patchState(store, { isLoading: true })),
           switchMap(() =>
             service.getProducts().pipe(
               tapResponse(
-                (products) => patchState(store, setEntities(products)),
+                (products) =>
+                  patchState(store, setEntities(products), {
+                    isLoading: false,
+                  }),
                 (error) => console.error('Error loading products', error),
               ),
             ),
@@ -87,33 +107,19 @@ export const ProductsStore = signalStore(
       ),
     };
   }),
+
   withComputed((store) => {
     const reduxStore = inject(Store);
-    const deletions = reduxStore.selectSignal(selectDeletions);
-    const updates = reduxStore.selectSignal(selectUpdates) as Signal<
-      ApiProduct[]
-    >;
-    const additions = reduxStore.selectSignal(selectAdditions) as Signal<
-      Omit<ApiProduct, 'id'>[]
-    >;
 
     return {
       productList: computed(() => {
-        const data = store.entities().map((i) => ({
-          item: i,
-          meta: {
-            isDeleting: deletions().some((d) => d === i.id),
-            isUpdating: updates().some((d) => d.id === i.id),
-
-            update: updates().find((d) => d.id === i.id),
-          },
-        }));
-
-        return {
-          data,
-          isAdding: additions().length > 0,
-          additions: additions(),
-        };
+        const entities = store.entities();
+        const sortKey = store.sortKey();
+        const sortOrder = store.sortOrder();
+        const sortedEntities = sortEntities(entities, sortKey, sortOrder);
+        return reduxStore.selectSignal(
+          selectOutboxAugmentedList(sortedEntities),
+        )();
       }),
     };
   }),
@@ -123,3 +129,28 @@ export const ProductsStore = signalStore(
     },
   }),
 );
+function sortEntities(
+  entities: ApiProduct[],
+  sortKey: SortKey,
+  sortOrder: SortOrder,
+) {
+  return Object.values(entities).sort((a, b) => {
+    if (sortKey === 'price') {
+      if (a[sortKey] < b[sortKey]) {
+        return sortOrder === 'asc' ? -1 : 1;
+      }
+      if (a[sortKey] > b[sortKey]) {
+        return sortOrder === 'asc' ? 1 : -1;
+      }
+      return 0;
+    } else {
+      if (a[sortKey].toLowerCase() < b[sortKey].toLowerCase()) {
+        return sortOrder === 'asc' ? -1 : 1;
+      }
+      if (a[sortKey].toLowerCase() > b[sortKey].toLowerCase()) {
+        return sortOrder === 'asc' ? 1 : -1;
+      }
+      return 0;
+    }
+  });
+}

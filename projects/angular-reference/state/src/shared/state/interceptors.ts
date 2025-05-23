@@ -8,14 +8,14 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { HttpMethods } from 'msw';
-import { catchError, Observable, tap } from 'rxjs';
-import { RequestEntity } from '.';
-import { OutboxActions } from './actions';
 
+import { catchError, Observable, tap } from 'rxjs';
+import { RequestEntity } from './reducer';
+import { OutboxActions } from './actions';
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export const OUTBOX_SOURCED = new HttpContextToken<
   | {
-      method: HttpMethods;
+      method: HttpMethod;
       kind: 'deletion' | 'addition' | 'update';
       body: unknown;
     }

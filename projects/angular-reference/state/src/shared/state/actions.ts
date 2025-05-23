@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { RequestEntity } from '.';
+import { RequestEntity } from './reducer';
 
 export const OutboxActions = createActionGroup({
   source: 'Outbox',

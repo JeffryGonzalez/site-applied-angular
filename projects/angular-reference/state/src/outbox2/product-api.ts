@@ -1,7 +1,7 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { OUTBOX_SOURCED } from '../shared/state/interceptors';
 import { HttpMethods } from 'msw';
+import { withOutboxState } from '../shared/state/';
 
 export type ApiProduct = { id: string; name: string; price: number };
 
@@ -30,22 +30,4 @@ export class ProductsApi {
       },
     );
   }
-}
-
-function withOutboxState<T>(
-  state: T,
-  method: HttpMethods,
-  kind: 'deletion' | 'addition' | 'update' | undefined = undefined,
-) {
-  return new HttpContext().set(OUTBOX_SOURCED, {
-    method,
-    kind:
-      kind ??
-      (method === HttpMethods.DELETE
-        ? 'deletion'
-        : method === HttpMethods.POST
-          ? 'addition'
-          : 'update'),
-    body: state,
-  });
 }
