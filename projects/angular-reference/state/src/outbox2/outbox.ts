@@ -1,8 +1,8 @@
 import { CurrencyPipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectDeletions } from '../shared/state';
 import { ProductsStore } from './products-store';
+import { selectDeadLetters } from '../shared/state';
 
 @Component({
   selector: 'app-outbox2-outbox',

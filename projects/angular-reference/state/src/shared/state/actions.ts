@@ -10,5 +10,9 @@ export const OutboxActions = createActionGroup({
     responseReceived: props<{
       payload: RequestEntity;
     }>(),
+    errorReceived: props<{
+      payload: RequestEntity;
+      error: { status: number; statusText: string };
+    }>(),
   },
 });

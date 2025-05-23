@@ -1,4 +1,5 @@
 import { computed, inject, Signal } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
   signalStore,
@@ -12,16 +13,15 @@ import {
   setEntity,
   withEntities,
 } from '@ngrx/signals/entities';
-import { ProductsApi } from './product-api';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { map, mergeMap, pipe, switchMap, tap } from 'rxjs';
-import { tapResponse } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
+import { map, mergeMap, pipe, switchMap } from 'rxjs';
 import {
   selectAdditions,
   selectDeletions,
   selectUpdates,
 } from '../shared/state';
+import { ProductsApi } from './product-api';
 type ApiProduct = {
   id: string;
   name: string;
@@ -96,6 +96,7 @@ export const ProductsStore = signalStore(
     const additions = reduxStore.selectSignal(selectAdditions) as Signal<
       Omit<ApiProduct, 'id'>[]
     >;
+
     return {
       productList: computed(() => {
         const data = store.entities().map((i) => ({
@@ -103,6 +104,7 @@ export const ProductsStore = signalStore(
           meta: {
             isDeleting: deletions().some((d) => d === i.id),
             isUpdating: updates().some((d) => d.id === i.id),
+
             update: updates().find((d) => d.id === i.id),
           },
         }));

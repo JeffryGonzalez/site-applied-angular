@@ -1,5 +1,6 @@
 import {
   HttpContextToken,
+  HttpErrorResponse,
   HttpEvent,
   HttpEventType,
   HttpHandlerFn,
@@ -11,10 +12,11 @@ import { HttpMethods } from 'msw';
 import { catchError, Observable, tap } from 'rxjs';
 import { RequestEntity } from '.';
 import { OutboxActions } from './actions';
-const ctr = 0;
+
 export const OUTBOX_SOURCED = new HttpContextToken<
   | {
       method: HttpMethods;
+      kind: 'deletion' | 'addition' | 'update';
       body: unknown;
     }
   | undefined
@@ -34,13 +36,15 @@ export function addRequestToOutbox(
       id,
       timestamp: Date.now(),
       body: outbox.body,
+
+      kind: outbox.kind,
       method: req.method,
     };
     store.dispatch(OutboxActions.requestSent({ payload }));
     return next(req).pipe(
       tap((r) => {
         if (r.type === HttpEventType.Response) {
-          console.log({ msg: 'Got an Outbox Response', r, ctr });
+          console.log({ msg: 'Got an Outbox Response', r });
 
           store.dispatch(
             OutboxActions.responseReceived({
@@ -49,11 +53,16 @@ export function addRequestToOutbox(
           );
         }
       }),
-      catchError((err) => {
-        console.log({ msg: 'Got an Outbox Error', err, ctr });
+      catchError((err: HttpErrorResponse) => {
+        console.log({
+          msg: 'Got an Outbox Error',
+          statusText: err.statusText,
+          code: err.status,
+        });
         store.dispatch(
-          OutboxActions.responseReceived({
+          OutboxActions.errorReceived({
             payload: { ...payload, timestamp: Date.now() },
+            error: { status: err.status, statusText: err.statusText },
           }),
         );
         throw err;

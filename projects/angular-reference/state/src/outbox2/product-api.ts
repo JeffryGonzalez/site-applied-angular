@@ -32,9 +32,20 @@ export class ProductsApi {
   }
 }
 
-function withOutboxState<T>(state: T, method: HttpMethods) {
+function withOutboxState<T>(
+  state: T,
+  method: HttpMethods,
+  kind: 'deletion' | 'addition' | 'update' | undefined = undefined,
+) {
   return new HttpContext().set(OUTBOX_SOURCED, {
     method,
+    kind:
+      kind ??
+      (method === HttpMethods.DELETE
+        ? 'deletion'
+        : method === HttpMethods.POST
+          ? 'addition'
+          : 'update'),
     body: state,
   });
 }
