@@ -1,8 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { ProductsStore } from './products-store';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ProductsStore } from './products-store';
 
 @Component({
   selector: 'app-outbox2-outbox',
@@ -71,8 +70,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
           <td>Actions</td>
         </thead>
         <tbody>
-          @if (store.productList().isAdding) {
-            @for (item of store.productList().additions; track $index) {
+          @if (store.outboxAugmentedList().isAdding) {
+            @for (item of store.outboxAugmentedList().additions; track $index) {
               <tr>
                 <td>
                   {{ item.name }}
@@ -85,7 +84,10 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
               </tr>
             }
           }
-          @for (product of store.productList().data; track product.item.id) {
+          @for (
+            product of store.outboxAugmentedList().data;
+            track product.item.id
+          ) {
             <tr>
               @if (product.meta.isMutating) {
                 <td class="italic" [class.opacity-50]="product.meta.isDeleting">
@@ -143,7 +145,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class OutboxComponent {
   store = inject(ProductsStore);
-  reduxStore = inject(Store);
+
   form = new FormGroup({
     name: new FormControl<string>(''),
     price: new FormControl<number>(0),

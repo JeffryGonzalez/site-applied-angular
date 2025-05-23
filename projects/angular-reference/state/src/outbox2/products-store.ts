@@ -5,6 +5,7 @@ import {
   patchState,
   signalStore,
   withComputed,
+  withFeature,
   withHooks,
   withMethods,
   withState,
@@ -16,9 +17,10 @@ import {
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { Store } from '@ngrx/store';
 import { map, mergeMap, pipe, switchMap, tap } from 'rxjs';
-import { selectOutboxAugmentedList } from '../shared/state/reducer';
+
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withOutbox } from '../shared/state';
 import { ProductsApi } from './product-api';
 const SORT_KEYS = ['name', 'price'] as const;
 type SortKey = (typeof SORT_KEYS)[number];
@@ -29,8 +31,10 @@ type ApiProduct = {
   name: string;
   price: number;
 };
+
 export const ProductsStore = signalStore(
   withEntities<ApiProduct>(),
+  withDevtools('ProductsOutbox'),
   withState({
     sortKey: 'price' as SortKey,
     sortOrder: 'desc' as SortOrder,
@@ -109,20 +113,16 @@ export const ProductsStore = signalStore(
   }),
 
   withComputed((store) => {
-    const reduxStore = inject(Store);
-
     return {
-      productList: computed(() => {
+      sortedProducts: computed(() => {
         const entities = store.entities();
         const sortKey = store.sortKey();
         const sortOrder = store.sortOrder();
-        const sortedEntities = sortEntities(entities, sortKey, sortOrder);
-        return reduxStore.selectSignal(
-          selectOutboxAugmentedList(sortedEntities),
-        )();
+        return sortEntities(entities, sortKey, sortOrder);
       }),
     };
   }),
+  withFeature((store) => withOutbox('products', store.sortedProducts)),
   withHooks({
     onInit: (store) => {
       store.load();

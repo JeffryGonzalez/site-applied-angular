@@ -5,6 +5,7 @@ export type RequestEntity = {
   id: string;
   timestamp: number;
   method: string;
+  name: string;
   kind: 'deletion' | 'addition' | 'update';
   body: unknown;
 };

@@ -17,13 +17,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('../anti-patterns/routes').then((m) => m.ANTI_PATTERN_ROUTES),
   },
+
   {
     path: 'outbox',
-    loadChildren: () =>
-      import('../shared-state/routes').then((m) => m.SHARED_STATE_ROUTES),
-  },
-  {
-    path: 'outbox2',
     loadChildren: () =>
       import('../outbox2/routes').then((m) => m.OUTBOX_TWO_ROUTES),
   },

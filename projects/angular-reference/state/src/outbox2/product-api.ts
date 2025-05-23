@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { HttpMethods } from 'msw';
+
 import { withOutboxState } from '../shared/state/';
 
 export type ApiProduct = { id: string; name: string; price: number };
@@ -13,12 +13,12 @@ export class ProductsApi {
 
   deleteProduct(id: string) {
     return this.#client.delete(`https://some-api/products/${id}`, {
-      context: withOutboxState(id, HttpMethods.DELETE),
+      context: withOutboxState(id, 'DELETE'),
     });
   }
   addProduct(product: Omit<ApiProduct, 'id'>) {
     return this.#client.post<ApiProduct>('https://some-api/products', product, {
-      context: withOutboxState(product, HttpMethods.POST),
+      context: withOutboxState(product, 'POST'),
     });
   }
   updateProduct(product: ApiProduct) {
@@ -26,7 +26,7 @@ export class ProductsApi {
       `https://some-api/products/${product.id}`,
       product,
       {
-        context: withOutboxState(product, HttpMethods.PUT),
+        context: withOutboxState(product, 'PUT'),
       },
     );
   }
