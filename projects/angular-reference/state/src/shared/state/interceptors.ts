@@ -5,7 +5,7 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { ApplicationRef, inject } from '@angular/core';
 
 import { tap } from 'rxjs';
 import { globalOutboxStore } from '../services/outbox-store';
@@ -16,15 +16,17 @@ export const OUTBOX_SOURCED = new HttpContextToken<
       method: HttpMethod;
       kind: 'deletion' | 'addition' | 'update';
       body: unknown;
+      name: string;
     }
   | undefined
 >(() => undefined);
 export const OUTBOX_SOURCED_ID = new HttpContextToken<string>(() => '');
 
-export function addOutboxFeatureInterceptor(name: string): HttpInterceptorFn {
+export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const outbox = req.context.get(OUTBOX_SOURCED);
     const store = inject(globalOutboxStore);
+    const appRef = inject(ApplicationRef);
     console.log('Intercepted a request', req.url);
     if (outbox) {
       const id = req.context.get(OUTBOX_SOURCED_ID) || crypto.randomUUID();
@@ -32,12 +34,12 @@ export function addOutboxFeatureInterceptor(name: string): HttpInterceptorFn {
         id,
         timestamp: Date.now(),
         body: outbox.body,
-        name,
+        name: outbox.name,
         kind: outbox.kind,
         method: req.method,
       };
       store.requestSent(payload);
-
+      appRef.tick();
       return next(req).pipe(
         tap((r) => {
           if (r.type === HttpEventType.Response) {

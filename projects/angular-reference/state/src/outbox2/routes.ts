@@ -8,11 +8,7 @@ export const OUTBOX_TWO_ROUTES: Routes = [
   {
     path: '',
     component: OutboxComponent,
-    providers: [
-      ProductsApi,
-      ProductsStore,
-      provideHttpClient(withInterceptors([])),
-    ],
+    providers: [ProductsApi, ProductsStore],
     children: [],
   },
 ];

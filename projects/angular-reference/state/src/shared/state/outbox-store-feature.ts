@@ -1,8 +1,6 @@
 import { computed, inject, Signal } from '@angular/core';
 import { signalStoreFeature, withComputed, withMethods } from '@ngrx/signals';
-import { OutboxInterceptorRegistry } from '../services/outbox-interceptors';
 import { globalOutboxStore } from '../services/outbox-store';
-import { addOutboxFeatureInterceptor } from './interceptors';
 import { RequestEntity } from './reducer';
 
 export function withOutbox<T extends { id: string }>(
@@ -10,8 +8,7 @@ export function withOutbox<T extends { id: string }>(
   entities: Signal<T[]>,
 ) {
   const outboxStore = inject(globalOutboxStore);
-  const interceptorManager = inject(OutboxInterceptorRegistry);
-  interceptorManager.addInterceptor(addOutboxFeatureInterceptor(name));
+
   return signalStoreFeature(
     withMethods(() => {
       return {
