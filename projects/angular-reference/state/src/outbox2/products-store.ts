@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import {
@@ -8,7 +7,6 @@ import {
   withFeature,
   withHooks,
   withMethods,
-  withState,
 } from '@ngrx/signals';
 import {
   removeEntity,
@@ -20,38 +18,17 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { map, mergeMap, pipe, switchMap, tap } from 'rxjs';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
-import { withOutbox } from '../shared/state';
-import { ProductsApi } from './product-api';
-const SORT_KEYS = ['name', 'price'] as const;
-type SortKey = (typeof SORT_KEYS)[number];
-const SORT_ORDERS = ['asc', 'desc'] as const;
-type SortOrder = (typeof SORT_ORDERS)[number];
-type ApiProduct = {
-  id: string;
-  name: string;
-  price: number;
-};
+import { withOutbox } from '@outbox';
+import { ApiProduct, ProductsApi } from './product-api';
+import { sortEntities, withProductSorting } from './product-store-sorting';
 
 export const ProductsStore = signalStore(
   withEntities<ApiProduct>(),
   withDevtools('ProductsOutbox'),
-  withState({
-    sortKey: 'price' as SortKey,
-    sortOrder: 'desc' as SortOrder,
-    isLoading: true,
-  }),
+  withProductSorting(),
   withMethods((store) => {
     const service = inject(ProductsApi);
     return {
-      setSortKey: (key: SortKey) => {
-        if (store.sortOrder() === 'asc') {
-          patchState(store, { sortKey: key, sortOrder: 'desc' });
-        } else {
-          patchState(store, { sortKey: key, sortOrder: 'asc' });
-        }
-      },
-      setSortOrder: (order: SortOrder) =>
-        patchState(store, { sortOrder: order }),
       load: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
@@ -129,28 +106,3 @@ export const ProductsStore = signalStore(
     },
   }),
 );
-function sortEntities(
-  entities: ApiProduct[],
-  sortKey: SortKey,
-  sortOrder: SortOrder,
-) {
-  return Object.values(entities).sort((a, b) => {
-    if (sortKey === 'price') {
-      if (a[sortKey] < b[sortKey]) {
-        return sortOrder === 'asc' ? -1 : 1;
-      }
-      if (a[sortKey] > b[sortKey]) {
-        return sortOrder === 'asc' ? 1 : -1;
-      }
-      return 0;
-    } else {
-      if (a[sortKey].toLowerCase() < b[sortKey].toLowerCase()) {
-        return sortOrder === 'asc' ? -1 : 1;
-      }
-      if (a[sortKey].toLowerCase() > b[sortKey].toLowerCase()) {
-        return sortOrder === 'asc' ? 1 : -1;
-      }
-      return 0;
-    }
-  });
-}

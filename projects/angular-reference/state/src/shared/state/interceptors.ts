@@ -1,23 +1,20 @@
 import {
-  HttpContextToken,
   HttpErrorResponse,
   HttpEventType,
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { ApplicationRef, inject } from '@angular/core';
+import { inject } from '@angular/core';
 
 import { catchError, tap } from 'rxjs';
-import { globalOutboxStore } from './outbox-store';
+import { OutboxStore } from './outbox-store';
 import { OUTBOX_SOURCED, OUTBOX_SOURCED_ID, RequestEntity } from './types';
 
 export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const outbox = req.context.get(OUTBOX_SOURCED);
-    const store = inject(globalOutboxStore);
-    const appRef = inject(ApplicationRef);
-    console.log('Intercepted a request', req.url);
+    const store = inject(OutboxStore);
     if (outbox) {
       const id = req.context.get(OUTBOX_SOURCED_ID) || crypto.randomUUID();
       const payload: RequestEntity = {
@@ -29,7 +26,6 @@ export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
         method: req.method,
       };
       store.requestSent(payload);
-      appRef.tick();
       return next(req).pipe(
         tap((r) => {
           if (r.type === HttpEventType.Response) {

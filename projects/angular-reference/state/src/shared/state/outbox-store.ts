@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods } from '@ngrx/signals';
 import { addEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
 import { RequestEntity } from './types';
 
-export const globalOutboxStore = signalStore(
+export const OutboxStore = signalStore(
   withEntities<RequestEntity>(),
   withDevtools('GlobalOutboxStore'),
   withMethods((store) => {

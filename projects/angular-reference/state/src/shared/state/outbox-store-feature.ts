@@ -5,7 +5,7 @@ import {
   withMethods,
   withProps,
 } from '@ngrx/signals';
-import { globalOutboxStore } from './outbox-store';
+import { OutboxStore } from './outbox-store';
 
 export function withOutbox<T extends { id: string }>(
   name: string,
@@ -16,7 +16,7 @@ export function withOutbox<T extends { id: string }>(
       return {};
     }),
     withProps(() => ({
-      ob: inject(globalOutboxStore),
+      ob: inject(OutboxStore),
     })),
     withComputed((store) => {
       //  const xx = store.outbox.get();
