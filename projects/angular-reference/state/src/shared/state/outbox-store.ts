@@ -1,10 +1,13 @@
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
-import { patchState, signalStore, withMethods } from '@ngrx/signals';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { addEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
-import { RequestEntity } from './types';
+import { ErrorResponseEntity, RequestEntity } from './types';
 
 export const OutboxStore = signalStore(
   withEntities<RequestEntity>(),
+  withState({
+    deadLetters: [] as ErrorResponseEntity[],
+  }),
   withDevtools('GlobalOutboxStore'),
   withMethods((store) => {
     return {
@@ -14,9 +17,9 @@ export const OutboxStore = signalStore(
       responseReceived: (payload: RequestEntity) => {
         patchState(store, removeEntity(payload.id));
       },
-      responseError: (payload: RequestEntity) => {
-        // TODO: handle error
-        patchState(store, removeEntity(payload.id));
+      responseError: (payload: ErrorResponseEntity) => {
+        const deadLetters = [payload, ...store.deadLetters()];
+        patchState(store, removeEntity(payload.id), { deadLetters });
       },
     };
   }),

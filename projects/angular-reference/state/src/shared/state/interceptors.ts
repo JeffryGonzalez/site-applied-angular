@@ -9,7 +9,12 @@ import { inject } from '@angular/core';
 
 import { catchError, tap } from 'rxjs';
 import { OutboxStore } from './outbox-store';
-import { OUTBOX_SOURCED, OUTBOX_SOURCED_ID, RequestEntity } from './types';
+import {
+  ErrorResponseEntity,
+  OUTBOX_SOURCED,
+  OUTBOX_SOURCED_ID,
+  RequestEntity,
+} from './types';
 
 export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
@@ -38,7 +43,13 @@ export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
             statusText: error.statusText,
             code: error.status,
           });
-          store.responseError({ ...payload, timestamp: Date.now() });
+          const errorPayload: ErrorResponseEntity = {
+            ...payload,
+            statusText: error.statusText,
+            statusCode: error.status,
+            timestamp: Date.now(),
+          };
+          store.responseError(errorPayload);
           throw error;
         }),
       );

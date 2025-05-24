@@ -39,7 +39,7 @@ export function withOutbox<T extends { id: string }>(
               isDeleting: deletions.includes(e.id),
               isUpdating: updates.some((u) => u.id === e.id),
               isMutating:
-                additions.some((a) => a.id === e.id) ||
+                deletions.some((a) => a === e.id) ||
                 updates.some((u) => u.id === e.id),
               update: updates.find((u) => u.id === e.id),
             },

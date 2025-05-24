@@ -21,6 +21,6 @@ export const routes: Routes = [
   {
     path: 'outbox',
     loadChildren: () =>
-      import('../outbox2/routes').then((m) => m.OUTBOX_TWO_ROUTES),
+      import('../outbox/routes').then((m) => m.OUTBOX_TWO_ROUTES),
   },
 ];

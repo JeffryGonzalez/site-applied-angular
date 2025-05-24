@@ -8,6 +8,11 @@ export type RequestEntity = {
   kind: 'deletion' | 'addition' | 'update';
   body: unknown;
 };
+
+export type ErrorResponseEntity = RequestEntity & {
+  statusText: string;
+  statusCode: number;
+};
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export const OUTBOX_SOURCED = new HttpContextToken<
   | {

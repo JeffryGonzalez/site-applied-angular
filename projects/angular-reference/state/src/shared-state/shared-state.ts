@@ -94,13 +94,13 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
                     <span class="flex flex-row gap-2">
                       <button
                         (click)="store.deleteProduct(product)"
-                        class="btn btn-warning btn-sm"
+                        class="btn btn-warning btn-dash btn-sm"
                       >
                         Delete
                       </button>
                       <button
                         (click)="store.doublePrice(product)"
-                        class="btn btn-warning btn-sm"
+                        class="btn btn-warning btn-dash btn-sm"
                       >
                         Double Price
                       </button>

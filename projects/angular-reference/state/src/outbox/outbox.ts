@@ -2,15 +2,22 @@ import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductsStore } from './products-store';
+import { ProductsApi } from './product-api';
 
 @Component({
   selector: 'app-outbox2-outbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, ReactiveFormsModule],
+  providers: [ProductsApi, ProductsStore],
   template: `
-    <p>Outbox</p>
+    <p class="text-3xl font-black pb-4">Outbox</p>
     @if (store.isLoading()) {
-      <span class="loading loading-dots loading-lg"></span>
+      <div class="flex w-full flex-col gap-4">
+        <div class="skeleton h-32 w-full"></div>
+        <div class="skeleton h-8 w-full"></div>
+        <div class="skeleton h-8 w-full"></div>
+        <div class="skeleton h-8 w-full"></div>
+      </div>
     } @else {
       <form
         [formGroup]="form"
@@ -72,14 +79,24 @@ import { ProductsStore } from './products-store';
         <tbody>
           @if (store.outboxAugmentedList().isAdding) {
             @for (item of store.outboxAugmentedList().additions; track $index) {
-              <tr>
+              <tr class="">
                 <td>
-                  {{ item.name }}
+                  <span class="">{{ item.name }}</span>
                 </td>
                 <td>{{ item.price | currency }}</td>
                 <td>
-                  <span class="loading loading-dots loading-lg"></span>
-                  <span>Adding..</span>
+                  <div class="z-10  ">
+                    <div
+                      class="flex flex-row gap-2 w-60 justify-center absolute pt-2"
+                    >
+                      <span class="loading loading-dots loading-lg"></span>
+                      <span>Adding..</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-row gap-2 w-60 opacity-30 ">
+                    <button class="btn btn-error w-1/2">Delete</button>
+                    <button class="btn btn-primary w-1/2">Double Price</button>
+                  </div>
                 </td>
               </tr>
             }
@@ -106,14 +123,17 @@ import { ProductsStore } from './products-store';
               }
 
               <td>
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-row gap-2 w-60">
                   @if (product.meta.isDeleting) {
-                    <button class="btn btn-danger">
-                      <span class="loading loading-dots loading-lg"></span>
+                    <button class="btn btn-danger btn-dash w-1/2">
+                      <span class="opacity-35 absolute">Delete</span>
+                      <span
+                        class="loading loading-dots loading-lg z-10 absolute"
+                      ></span>
                     </button>
                   } @else {
                     <button
-                      class="btn btn-error"
+                      class="btn btn-error w-1/2"
                       (click)="store.deleteProduct(product.item.id)"
                       [disabled]="product.meta.isMutating"
                     >
@@ -121,12 +141,15 @@ import { ProductsStore } from './products-store';
                     </button>
                   }
                   @if (product.meta.isUpdating) {
-                    <button class="btn btn-primary">
-                      <span class="loading loading-dots loading-lg"></span>
+                    <button class="btn btn-primary btn-dash w-1/2">
+                      <span class="opacity-35 absolute">Double Price</span>
+                      <span
+                        class="loading loading-dots loading-lg z-10 absolute"
+                      ></span>
                     </button>
                   } @else {
                     <button
-                      class="btn btn-primary"
+                      class="btn btn-primary w-1/2"
                       [disabled]="product.meta.isMutating"
                       (click)="store.doublePrice(product.item)"
                     >
