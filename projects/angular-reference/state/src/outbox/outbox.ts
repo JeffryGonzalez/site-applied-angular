@@ -161,6 +161,30 @@ import { DeadLetterComponent } from './dead-letter';
                 </div>
               </td>
             </tr>
+            @if (product.meta.errors.length > 0) {
+              <tr>
+                <td colspan="3" class="text-red-500">
+                  @for (error of product.meta.errors; track error.id) {
+                    <div>
+                      <span>Error while </span>
+                      @switch (error.kind) {
+                        @case ('deletion') {
+                          <span>Deleting:</span>
+                          <span>{{ error.message }}</span>
+                        }
+                        @case ('update') {
+                          <span>Updating:</span>
+                          <span>{{ error.message }}</span>
+                        }
+                        @default {
+                          <span>Unknown Error:</span>
+                        }
+                      }
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>
