@@ -47,6 +47,7 @@ export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
             ...payload,
             statusText: error.statusText,
             statusCode: error.status,
+            message: error.error || error.message,
             timestamp: Date.now(),
           };
           store.responseError(errorPayload);

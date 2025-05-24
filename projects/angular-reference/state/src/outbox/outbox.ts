@@ -3,11 +3,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductsStore } from './products-store';
 import { ProductsApi } from './product-api';
+import { DeadLetterComponent } from './dead-letter';
 
 @Component({
   selector: 'app-outbox2-outbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, ReactiveFormsModule],
+  imports: [CurrencyPipe, ReactiveFormsModule, DeadLetterComponent],
   providers: [ProductsApi, ProductsStore],
   template: `
     <p class="text-3xl font-black pb-4">Outbox</p>
@@ -19,6 +20,7 @@ import { ProductsApi } from './product-api';
         <div class="skeleton h-8 w-full"></div>
       </div>
     } @else {
+      <app-dead-letter />
       <form
         [formGroup]="form"
         (ngSubmit)="addProduct()"

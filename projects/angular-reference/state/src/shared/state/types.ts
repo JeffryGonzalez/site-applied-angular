@@ -12,6 +12,7 @@ export type RequestEntity = {
 export type ErrorResponseEntity = RequestEntity & {
   statusText: string;
   statusCode: number;
+  message?: string;
 };
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export const OUTBOX_SOURCED = new HttpContextToken<

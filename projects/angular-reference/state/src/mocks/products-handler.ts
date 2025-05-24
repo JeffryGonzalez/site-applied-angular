@@ -53,6 +53,12 @@ export const ProductHandler = [
       name: string;
       price: number;
     };
+    if (product.price > 500) {
+      await settableDelay();
+      return new HttpResponse('Price too high limit is $500.00', {
+        status: 400,
+      });
+    }
     const newProduct = { ...product, id: crypto.randomUUID() } as unknown as {
       id: string;
       name: string;
@@ -66,7 +72,9 @@ export const ProductHandler = [
     const p = (await request.json()) as unknown as ApiProduct;
     if (p.price > 500) {
       await settableDelay();
-      return new HttpResponse('Price too high', { status: 400 });
+      return new HttpResponse('Price too high limit is $500.00', {
+        status: 400,
+      });
     }
 
     const products = PRODUCTS.filter((product) => product.id !== p.id);
