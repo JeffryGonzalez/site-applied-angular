@@ -22,4 +22,9 @@ export const routes: Routes = [
     path: 'outbox',
     loadChildren: () => import('../outbox/routes').then((m) => m.OUTBOX_ROUTES),
   },
+  {
+    path: 'todo-list',
+    loadChildren: () =>
+      import('../todo-list/routes').then((m) => m.TODO_LIST_ROUTES),
+  },
 ];

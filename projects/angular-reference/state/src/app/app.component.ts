@@ -33,6 +33,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
               Outbox
             </a>
             <a
+              routerLink="todo-list"
+              class="link"
+              [routerLinkActive]="['uppercase']"
+            >
+              Todo List
+            </a>
+            <a
               routerLink="anti-patterns"
               class="link"
               [routerLinkActive]="['uppercase']"
