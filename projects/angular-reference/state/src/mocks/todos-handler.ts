@@ -9,14 +9,23 @@ let TODOS: ApiTodoListItem[] = [
   { id: '5', title: 'Sweep Drive', completed: false },
 ];
 
+const delayAmount = 200;
+
 export const TodoListHandlers = [
   http.get('https://some-api/todo-list', async () => {
-    await delay();
+    await delay(delayAmount);
     return HttpResponse.json(TODOS);
   }),
   http.delete('https://some-api/todo-list/:id', async (req) => {
     const { id } = req.params as unknown as { id: string };
 
+    if (id === '1') {
+      // Simulate a server error for the first item
+      await delay(delayAmount);
+      return new HttpResponse('The Garage always needs cleaned', {
+        status: 400,
+      });
+    }
     TODOS = TODOS.filter((todo) => todo.id !== id);
 
     await delay();
@@ -28,14 +37,18 @@ export const TodoListHandlers = [
       ...item,
       id: (TODOS.length + 1).toString(),
     };
+    if (item.title.toLocaleLowerCase().trim() === 'get in shape') {
+      await delay(delayAmount);
+      return new HttpResponse('Yeah, right, buddy', { status: 400 });
+    }
     TODOS.push(newItem);
-    await delay();
+    await delay(delayAmount);
     return HttpResponse.json(newItem, { status: 201 });
   }),
   http.put('https://some-api/todo-list/:id', async ({ request }) => {
     const item = (await request.json()) as ApiTodoListItem;
     TODOS = TODOS.map((todo) => (todo.id === item.id ? item : todo));
-    await delay();
+    await delay(delayAmount);
     return HttpResponse.json(item);
   }),
 ];
