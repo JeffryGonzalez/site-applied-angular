@@ -1,7 +1,7 @@
 import { HttpContext } from '@angular/common/http';
 import { HttpMethod, OUTBOX_SOURCED } from './types';
 
-export function withOutboxState<T>(
+export function withOutboxHttpContext<T>(
   name: string,
   state: T,
   method: HttpMethod,

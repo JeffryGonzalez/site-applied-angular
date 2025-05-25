@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 
-import { withOutboxState } from '@outbox';
+import { withOutboxHttpContext } from '@outbox';
 const FEATURE_NAME = 'products';
 export type ApiProduct = { id: string; name: string; price: number };
 
@@ -12,13 +12,13 @@ export class ProductsApi {
   }
 
   deleteProduct(id: string) {
-    return this.#client.delete(`https://some-api/products/${id}`, {
-      context: withOutboxState(FEATURE_NAME, id, 'DELETE'),
+    return this.#client.delete<void>(`https://some-api/products/${id}`, {
+      context: withOutboxHttpContext(FEATURE_NAME, id, 'DELETE'),
     });
   }
   addProduct(product: Omit<ApiProduct, 'id'>) {
     return this.#client.post<ApiProduct>('https://some-api/products', product, {
-      context: withOutboxState(FEATURE_NAME, product, 'POST'),
+      context: withOutboxHttpContext(FEATURE_NAME, product, 'POST'),
     });
   }
   updateProduct(product: ApiProduct) {
@@ -26,7 +26,7 @@ export class ProductsApi {
       `https://some-api/products/${product.id}`,
       product,
       {
-        context: withOutboxState(FEATURE_NAME, product, 'PUT'),
+        context: withOutboxHttpContext(FEATURE_NAME, product, 'PUT'),
       },
     );
   }
