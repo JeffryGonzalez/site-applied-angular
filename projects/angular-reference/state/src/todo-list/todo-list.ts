@@ -28,25 +28,52 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
         </tr>
       </thead>
       <tbody>
-        @for (todo of store.entities(); track todo.id) {
+        @for (
+          pendingItem of store.outboxAugmentedList().additions;
+          track pendingItem.id
+        ) {
           <tr>
-            <td>{{ todo.title }}</td>
-            <td>{{ todo.completed ? 'Yes' : 'No' }}</td>
+            <td>{{ pendingItem.title }}</td>
+            <td>{{ pendingItem.completed ? 'Yes' : 'No' }}</td>
+            <td>
+              <span class="loading loading-spinner loading-xs"></span>
+              <p>Adding the item</p>
+            </td>
+          </tr>
+        }
+        @for (
+          entity of store.outboxAugmentedList().data;
+          track entity.item.id
+        ) {
+          @let todo = entity.item;
+          <tr>
+            @if (entity.meta.isUpdating) {
+              <td>{{ entity.meta.update?.title }}</td>
+              <td>{{ entity.meta.update?.completed ? 'Yes' : 'No' }}</td>
+            } @else {
+              <td>{{ todo.title }}</td>
+              <td>{{ todo.completed ? 'Yes' : 'No' }}</td>
+            }
             <td class="flex gap-2">
-              @if (!todo.completed) {
-                <button
-                  class="btn btn-accent"
-                  (click)="store.markCompleted(todo)"
-                >
-                  Mark Completed
-                </button>
+              @if (entity.meta.isMutating) {
+                <span class="loading loading-spinner loading-xs"></span>
+                <p>Saving the changes</p>
               } @else {
-                <button
-                  class="btn btn-accent"
-                  (click)="store.deleteTodo(todo.id)"
-                >
-                  Remove From List
-                </button>
+                @if (!todo.completed) {
+                  <button
+                    class="btn btn-accent"
+                    (click)="store.markCompleted(todo)"
+                  >
+                    Mark Completed
+                  </button>
+                } @else {
+                  <button
+                    class="btn btn-accent"
+                    (click)="store.deleteTodo(todo.id)"
+                  >
+                    Remove From List
+                  </button>
+                }
               }
             </td>
           </tr>

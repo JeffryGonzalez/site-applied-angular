@@ -9,7 +9,7 @@ let TODOS: ApiTodoListItem[] = [
   { id: '5', title: 'Sweep Drive', completed: false },
 ];
 
-const delayAmount = 200;
+const delayAmount = 3000;
 
 export const TodoListHandlers = [
   http.get('https://some-api/todo-list', async () => {

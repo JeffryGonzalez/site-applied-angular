@@ -3,6 +3,7 @@ import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
   signalStore,
+  withFeature,
   withHooks,
   withMethods,
   withProps,
@@ -15,7 +16,8 @@ import {
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { map, mergeMap, pipe } from 'rxjs';
-import { ApiTodoListItem, TodoListApi } from './todo-list-api';
+import { ApiTodoListItem, FEATURE_NAME, TodoListApi } from './todo-list-api';
+import { withOutbox } from '@outbox';
 
 export const TodosStore = signalStore(
   withEntities<ApiTodoListItem>(),
@@ -82,6 +84,8 @@ export const TodosStore = signalStore(
       ),
     };
   }),
+  withFeature((store) => withOutbox(FEATURE_NAME, store.entities)),
+
   withHooks({
     onInit: (store) => {
       store._load();
