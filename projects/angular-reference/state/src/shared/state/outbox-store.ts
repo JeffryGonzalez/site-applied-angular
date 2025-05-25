@@ -21,6 +21,10 @@ export const OutboxStore = signalStore(
         const deadLetters = [payload, ...store.deadLetters()];
         patchState(store, removeEntity(payload.id), { deadLetters });
       },
+      clearError: (errorId: string) => {
+        const deadLetters = store.deadLetters().filter((e) => e.id !== errorId);
+        patchState(store, { deadLetters });
+      },
     };
   }),
 );

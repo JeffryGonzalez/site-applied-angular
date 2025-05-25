@@ -13,7 +13,7 @@ let PRODUCTS: ApiProduct[] = [
 ];
 
 // eslint-disable-next-line prefer-const
-let delayAmount = 3000;
+let delayAmount = 1000;
 
 const getRequestCount = 0;
 // MSW uses a random delay if no argument is passed to delay, or a number of MS if it is;

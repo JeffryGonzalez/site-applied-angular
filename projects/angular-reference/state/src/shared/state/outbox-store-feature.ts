@@ -12,15 +12,17 @@ export function withOutbox<T extends { id: string }>(
   entities: Signal<T[]>,
 ) {
   return signalStoreFeature(
-    withMethods(() => {
-      return {};
-    }),
     withProps(() => ({
       ob: inject(OutboxStore),
     })),
+    withMethods((store) => {
+      return {
+        clearError: (errorId: string) => {
+          store.ob.clearError(errorId);
+        },
+      };
+    }),
     withComputed((store) => {
-      //  const xx = store.outbox.get();
-      //   const ob = outboxStore.entities().filter((a) => a.name === name);
       return {
         outboxAugmentedList: computed(() => {
           const errors = store.ob.deadLetters().filter((d) => d.name === name);
@@ -71,11 +73,24 @@ export function withOutbox<T extends { id: string }>(
               ],
             },
           }));
+          const allEntityErrors = store.ob
+            .deadLetters()
+            .filter((e) => e.name === name && e.kind !== 'addition')
+            .map((e) => ({
+              message: e.message,
+              kind: e.kind,
+              id: e.body as string,
+              errorId: e.id,
+            }));
+          const hasErrors =
+            allEntityErrors.length > 0 || additionErrors.length > 0;
           return {
             data,
             isAdding: additions.length > 0,
             additions,
             additionErrors,
+            allEntityErrors,
+            hasErrors,
           };
         }),
       };

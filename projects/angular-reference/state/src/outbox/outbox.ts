@@ -1,17 +1,25 @@
 import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ProductsStore } from './products-store';
 import { ProductsApi } from './product-api';
-import { DeadLetterComponent } from './dead-letter';
+import { ProductsStore } from './products-store';
 
 @Component({
   selector: 'app-outbox2-outbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, ReactiveFormsModule, DeadLetterComponent],
+  imports: [CurrencyPipe, ReactiveFormsModule],
   providers: [ProductsApi, ProductsStore],
   template: `
-    <p class="text-3xl font-black pb-4">Outbox</p>
+    <div tabindex="0" class="collapse bg-base-100 border-base-300 border">
+      <div class="collapse-title font-semibold">Business "Rules"</div>
+      <div class="collapse-content text-sm">
+        <ul>
+          <li>Product prices cannot exceed $500.00</li>
+          <li>Product 5 (A Product 5) cannot be deleted</li>
+        </ul>
+      </div>
+    </div>
+
     @if (store.isLoading()) {
       <div class="flex w-full flex-col gap-4">
         <div class="skeleton h-32 w-full"></div>
@@ -20,7 +28,6 @@ import { DeadLetterComponent } from './dead-letter';
         <div class="skeleton h-8 w-full"></div>
       </div>
     } @else {
-      <app-dead-letter />
       <form
         [formGroup]="form"
         (ngSubmit)="addProduct()"
@@ -119,7 +126,18 @@ import { DeadLetterComponent } from './dead-letter';
                 </td>
               } @else {
                 <td>
-                  {{ product.item.name }}
+                  @if (product.meta.errors.length > 0) {
+                    <div class="indicator indicator-start">
+                      <span
+                        class="indicator-item status status-error animate-pulse"
+                      ></span>
+                      <div>
+                        {{ product.item.name }}
+                      </div>
+                    </div>
+                  } @else {
+                    {{ product.item.name }}
+                  }
                 </td>
                 <td>{{ product.item.price | currency }}</td>
               }
@@ -161,33 +179,44 @@ import { DeadLetterComponent } from './dead-letter';
                 </div>
               </td>
             </tr>
-            @if (product.meta.errors.length > 0) {
-              <tr>
-                <td colspan="3" class="text-red-500">
-                  @for (error of product.meta.errors; track error.id) {
-                    <div>
-                      <span>Error while </span>
-                      @switch (error.kind) {
-                        @case ('deletion') {
-                          <span>Deleting:</span>
-                          <span>{{ error.message }}</span>
-                        }
-                        @case ('update') {
-                          <span>Updating:</span>
-                          <span>{{ error.message }}</span>
-                        }
-                        @default {
-                          <span>Unknown Error:</span>
-                        }
-                      }
-                    </div>
-                  }
-                </td>
-              </tr>
-            }
           }
         </tbody>
       </table>
+      @if (store.outboxAugmentedList().hasErrors) {
+        <ul
+          class=" mt-4 border-2 border-white-500 rounded-lg p-4 bg-accent-content"
+        >
+          @for (
+            error of store.outboxAugmentedList().additionErrors;
+            track error.id
+          ) {
+            <li>
+              <button
+                class="btn btn-circle btn-xs btn-error ml-2 inline mr-4"
+                (click)="store.clearError(error.id)"
+              >
+                X
+              </button>
+              <span class="pr-4">{{ error.message }}</span>
+            </li>
+          }
+          @for (
+            error of store.outboxAugmentedList().allEntityErrors;
+            track error.id
+          ) {
+            <li>
+              <button
+                class="btn btn-circle btn-xs btn-error ml-2 inline mr-4"
+                (click)="store.clearError(error.errorId)"
+              >
+                X
+              </button>
+              <span class="pr-4">{{ error.message }}</span>
+            </li>
+          }
+        </ul>
+      }
+      <div></div>
     }
   `,
   styles: ``,
