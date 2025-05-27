@@ -19,7 +19,7 @@ import { map, mergeMap, pipe, switchMap, tap } from 'rxjs';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { withOutbox } from '@outbox';
-import { ApiProduct, ProductsApi } from './product-api';
+import { ApiProduct, FEATURE_NAME, ProductsApi } from './product-api';
 import { sortEntities, withProductSorting } from './product-store-sorting';
 
 export const ProductsStore = signalStore(
@@ -99,7 +99,7 @@ export const ProductsStore = signalStore(
       }),
     };
   }),
-  withFeature((store) => withOutbox('products', store.sortedProducts)),
+  withFeature((store) => withOutbox(FEATURE_NAME, store.sortedProducts)), // [!code highlight]
   withHooks({
     onInit: (store) => {
       store.load();

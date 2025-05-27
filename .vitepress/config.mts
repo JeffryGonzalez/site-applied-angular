@@ -64,7 +64,7 @@ editLink: {
             { text: "Services", link: "/adr/services"},
             { text: "Singleton Service", link: "/adr/services/singleton"},
             { text: "Chunking", link: "/adr/chunking"},
-            { text: "Server Data", link: "/adr/server-data"},
+
             { text: "State Management", link: "/adr/state", items: [
                 { text: "Overview", link: "/adr/state/state1", items: [
                     { text: "Component and Service", link: "/adr/state/1.component-state" },
