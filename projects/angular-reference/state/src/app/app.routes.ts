@@ -27,4 +27,8 @@ export const routes: Routes = [
     loadChildren: () =>
       import('../todo-list/routes').then((m) => m.TODO_LIST_ROUTES),
   },
+  {
+    path: 'ngrx-events',
+    loadChildren: () => import('../events/routes').then((m) => m.EVENTS_ROUTES),
+  },
 ];

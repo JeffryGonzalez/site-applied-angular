@@ -46,6 +46,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             >
               API Patterns
             </a>
+            <a
+              routerLink="ngrx-events"
+              class="link"
+              [routerLinkActive]="['uppercase']"
+            >
+              Ngrx Events
+            </a>
           </div>
         </div>
         <div class="w-full h-full">
