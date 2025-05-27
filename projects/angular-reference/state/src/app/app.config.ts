@@ -5,6 +5,7 @@ import { addOutboxFeatureInterceptor } from '../shared/state/interceptors';
 
 import { routes } from './app.routes';
 import { OutboxStore } from '@outbox';
+import { FeatureErrorStore } from '../shared/error-handling/store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,5 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(withInterceptors([addOutboxFeatureInterceptor()])),
     OutboxStore,
+    FeatureErrorStore,
   ],
 };

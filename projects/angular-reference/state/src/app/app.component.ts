@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ErrorDisplayComponent } from './components/error-display';
 
 @Component({
   selector: 'app-root',
@@ -56,6 +57,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           </div>
         </div>
         <div class="w-full h-full">
+          <app-error-display />
           <main
             class="container mx-auto   m-4 p-8 border-2 border-accent rounded-3xl "
           >
@@ -69,6 +71,6 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   `,
 
   styles: [],
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ErrorDisplayComponent],
 })
 export class AppComponent {}
