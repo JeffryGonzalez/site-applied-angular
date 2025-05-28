@@ -14,7 +14,9 @@ import { CounterStore } from '../state/counter/counter-store';
       <button (click)="dispatch.decrement()" class="btn btn-circle btn-error">
         -
       </button>
-      <span class="text-2xl">{{ counterStore.current() }}</span>
+      <span data-testid="current" class="text-2xl">{{
+        counterStore.current()
+      }}</span>
       <button (click)="dispatch.increment()" class="btn btn-circle btn-success">
         +
       </button>
@@ -26,7 +28,7 @@ import { CounterStore } from '../state/counter/counter-store';
           (click)="dispatch.setBy(val)"
           [class.btn-active]="counterStore.by() === val"
         >
-          {{ val }}
+          <span aria-label="current"> {{ val }}</span>
         </button>
       }
     </div>

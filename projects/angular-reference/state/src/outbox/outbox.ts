@@ -206,6 +206,7 @@ import { ProductsStore } from './products-store';
           ) {
             <li>
               <button
+                aria-label="clear error"
                 class="btn btn-circle btn-xs btn-error ml-2 inline mr-4"
                 (click)="store.clearError(error.errorId)"
               >
