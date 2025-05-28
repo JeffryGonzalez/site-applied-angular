@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, VERSION } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -6,7 +6,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   imports: [],
   template: `
     <div class="prose">
-      <h2>State Management Demos</h2>
+      <h2>State Management Demos (using Angular {{ version }})</h2>
       <p>
         This is a demo application showcasing different state management
         techniques in Angular. The goal is to provide a clear and concise
@@ -16,4 +16,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   `,
   styles: ``,
 })
-export class HomeComponent {}
+export class HomeComponent {
+  version = VERSION.full;
+}
