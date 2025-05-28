@@ -1,15 +1,18 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { addOutboxFeatureInterceptor } from '../shared/state/interceptors';
 
-import { routes } from './app.routes';
 import { OutboxStore } from '@outbox';
 import { FeatureErrorStore } from '../shared/error-handling/store';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(withInterceptors([addOutboxFeatureInterceptor()])),
     OutboxStore,
