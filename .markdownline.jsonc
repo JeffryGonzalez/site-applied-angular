@@ -1,0 +1,6 @@
+// Example .markdownlint.jsonc
+{
+  "default": true,
+  "MD013": { "line_length": 100, "code_blocks": false }, // Line length
+  "MD007": { "indent": 2 }, // Unordered list indentation
+}

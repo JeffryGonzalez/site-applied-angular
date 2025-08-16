@@ -1,8 +1,19 @@
 # The Angular Application
 
+<!--toc:start-->
+
+- [The Angular Application](#the-angular-application)
+  - [BFF Specific](#bff-specific)
+    - [`getCookie.ts`](#getcookiets)
+    - [`secure-api.interceptor.ts`](#secure-apiinterceptorts)
+    - [`app.config.ts`](#appconfigts)
+  - [Mock Service Workers](#mock-service-workers)
+  - [Tailwind and DaisyUI](#tailwind-and-daisyui) - [Add Some Tailwind Plugins](#add-some-tailwind-plugins)
+  <!--toc:end-->
+
 The Angular application was created with the Angular CLI. I skipped tests, and
 set the configuration to use inline styles and templates by default (as per
-[ADR - Components](../adr/components.md)).
+[ADR - Components](/adr/components/inline.md)).
 
 The command was this:
 
@@ -12,11 +23,10 @@ ng new Frontend --skip-tests --skip-git -t -s
 
 ![NgNew](/media/ngnew.gif)
 ::: info Testing
-We are skipping tests for this course - that will be a topic for a future course. However, 
+We are skipping tests for this course - that will be a topic for a future course. However,
 we will be more intentional about our testing plan than using the default configuration (Karma, etc.)
 provided by the Angular CLI
 :::
-
 
 ## BFF Specific
 
@@ -54,6 +64,7 @@ instructions here:
 Using the Tailwind CSS Extension, add the following to your VSCode settings:
 
 ![Tailwind](/media/tw.gif)
+
 ```json
 {
   "files.associations": {
@@ -65,7 +76,7 @@ Using the Tailwind CSS Extension, add the following to your VSCode settings:
 }
 ```
 
-### Add Some Tailwind Plugins:
+### Add Some Tailwind Plugins
 
 ```shell
 npm i -D @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio @tailwindcss/container-queries daisyui
