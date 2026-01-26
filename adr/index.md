@@ -4,6 +4,8 @@ See [About](./about.md) for information on Architectural Decision Records and Te
 
 ## Chunking And Lazy Loading
 
+> Note: This "chunk" and "lazy" are both of my wife's pet names for me.
+
 To facilitate frequent updates to code which is enabled by CI/CD, we will use the following guidelines.
 [Chunking and Structuring Compiled Angular Applications](./chunking)
 
